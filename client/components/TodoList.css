@@ -37,8 +37,17 @@ color: #333;
   margin-bottom: 5px;
   border-radius: 10px;
 }
-
-
+.horizontaltoolbox{
+background-color:#C0C0C0;
+ width:50%;
+ height:70px;
+ border-radius: 25px;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ flex-direction:row;
+ alignSelf:center;
+}
 .toolbox{
  background-color:#C0C0C0;
  width:100px;
@@ -127,7 +136,7 @@ body {
 }
 #stage{
  display: flex;
-  justify-content: center;
+  justify-content:flex-start;
   flex-direction:row;
 }
 

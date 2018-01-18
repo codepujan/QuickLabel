@@ -16,6 +16,9 @@ import {HashLoader} from 'react-spinners';
 
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 
+import AssitanceCanvas from './DrawSourceAssistance.js';
+
+ 
 import CheckCircle from 'material-ui/svg-icons/action/check-circle';
 
 import Save from 'material-ui/svg-icons/action/store';
@@ -60,17 +63,41 @@ let currentActiveChild;
 
 
 
+function OriginalAssister(props){
+let currentSelection=props.myState;
+let operationState=props.operationState;
+let operationAction=props.operationAction;
+let loadSpinnerAction=props.spinnerAction;
+let applyColor=props.activeColor;
+let socketId=props.socketId;
+
+if(props.myState=="freeform")
+{
+return(<div className="theater"> <AssitanceCanvas opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
+imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId}
+/> </div>);
+}
+else{
+return (<div></div>);
+}
+
+}
+
+
+
 function MainScreen(props){
 let screenType=props.loading;
 let rootContext=props.context;
 if(!screenType){
 return(
 <div>
- <div id="stage">
+ <div>
      <DrawToolbar context={rootContext}/>
-        <div>
-        <DrawingComponent myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} />
         </div>
+<div id="stage">
+        <DrawingComponent myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} />
+
+<OriginalAssister myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId}/>
 
         <div style={{height:60}} onClick={(event)=>rootContext.callChildServer()}>
 
@@ -134,23 +161,23 @@ let mThis=props.context;
 
 if(currentSelection=='rectangle')
         currentActiveChild=(<div className="theater"> 
- <DrawRectangleCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={500} cHeight={500}  imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}currentColor={applyColor} socketId={socketId}/></div>);
+ <DrawRectangleCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450}  imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}currentColor={applyColor} socketId={socketId}/></div>);
 else if (currentSelection=='circle')
         currentActiveChild=(<div className="theater"> 
-<DrawCircleCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={500} cHeight={500} currentColor={applyColor} imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}/></div>);
+<DrawCircleCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor} imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}/></div>);
 else if (currentSelection=='freeform')
         currentActiveChild=(<div className="theater"> 
-<DrawFreeFormCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={500} cHeight={500} currentColor={applyColor}
+<DrawFreeFormCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
 imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}
 /> </div>);
 else if (currentSelection=='magictouch')
 	currentActiveChild=(<div className="theater"> 
-<MagicTouchToolCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={500} cHeight={500} currentColor={applyColor}
+<MagicTouchToolCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
 imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}
 /> </div>);
 else   
  currentActiveChild=(<div className="theater"> 
-<NormalCanvas  opState={operationState} opAction={operationAction} cWidth={500} cHeight={500} spinnerStart={loadSpinnerAction}
+<NormalCanvas  opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} spinnerStart={loadSpinnerAction}
 imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}
 />
 </div>
@@ -188,7 +215,7 @@ function DrawToolbar(props){
 
 
 return(
-<div className="toolbox">
+<div className="horizontaltoolbox">
 
 <div className="tool" onClick={(event)=>{
 props.context.props.changeImage()
