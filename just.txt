@@ -1,0 +1,8 @@
+CREATE TABLE labelingapp.imagestorage (
+    user_id text,
+    dataset_name text,
+    image_name text,
+    imageblob blob,
+    PRIMARY KEY (user_id, dataset_name)
+) WITH CLUSTERING ORDER BY (dataset_name ASC)
+
