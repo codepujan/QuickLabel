@@ -250,6 +250,7 @@ var parentOffset = canvas.getBoundingClientRect();
 this.currX = (e.clientX - parentOffset.left);
 this.currY = (e.clientY - parentOffset.top);
 this.flag=true;
+this.orgicanvas.markActive();
 }
 
 
@@ -299,7 +300,7 @@ this.draw(ctx);
 else{
 if(this.currX!=0&&this.currY!=0){
 	    this.pencilPoints.push({x:this.currX,y:this.currY});
-this.orgicanvas.recievePoints(this.pencilPoints);
+this.orgicanvas.recievePoints(this.pencilPoints,this);
 this.draw(ctx);
 }
 

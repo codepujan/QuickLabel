@@ -114,12 +114,12 @@ this.handlePinch=this.handlePinch.bind(this);
 this.handlePan=this.handlePan.bind(this);
 this.handlePinchEnd=this.handlePinchEnd.bind(this);
 this.handlePanEnd=this.handlePanEnd.bind(this);
-this.recievePoints=this.recievePoints.bind(this)
 this.recievePoints=this.recievePoints.bind(this);
 this.canvasNode={};
 this.setchildCanvas=this.setchildCanvas.bind(this);
 this.scaleX=props.cWidth/props.imgWidth;
 this.scaleY=props.cHeight/props.imgHeight;
+this.assistanceView={};//View for the assistance ( Original Image ) 
 this.state=({imgData:props.opState.active.data,width:props.imgWidth,height:props.imgHeight,zoomMode:false});
 
 
@@ -187,11 +187,19 @@ this.adjustDeltaY=this.baseY;
 }
 
 
-recievePoints(message){
+recievePoints(message,orgiref){
 const ctx=this.canvasNode.getContext('2d');
 
 this.pencilPoints=message;
 this.draw(ctx);
+this.assistanceView=orgiref;
+}
+
+markActive(){
+this.currentActive=true;
+}
+markInactive(){
+this.currentActive=false;
 
 }
 
@@ -214,7 +222,7 @@ rgb:hexToRgb(this.props.currentColor)
 },this.props.socketId);
 
 this.pencilPoints=[];
-
+this.assistanceView.pencilPoints=[]; //clearing the other side of the story also 
 }
 
 
