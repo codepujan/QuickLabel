@@ -21,6 +21,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import FreeFormAssistanceCanvas from './FreeFormAssistance.js';
 import RectangleAssistanceCanvas from './RectangleAssistance.js';
 import CircleAssistance from './CircleAssistance.js';
+import PlainAssistView from './PlainAssistView.jsx';
 
  
 import CheckCircle from 'material-ui/svg-icons/action/check-circle';
@@ -92,6 +93,13 @@ imgWidth={operationState.width} imgHeight={operationState.height} socketId={sock
 return(<div className="theater"> <CircleAssistance opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
 imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref}
 /> </div>);
+}else if(props.myState=="magictouch")
+{
+return(<div className="theater"> <PlainAssistView opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
+imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref}
+/> </div>);
+
+
 }
 else{
 return (<div></div>);
@@ -223,7 +231,18 @@ imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height
 /> </div>);
 else if (currentSelection=='magictouch')
 	currentActiveChild=(<div className="theater"> 
-<MagicTouchToolCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
+<MagicTouchToolCanvas ref={(node)=>{
+mThis.childComp=node
+if(mThis.state.childrefset=="set")
+{
+console.log("Setting State of Mounted Chiled Ref ");
+mThis.setState({childref:node,childrefset:"unset"});
+}
+else{
+console.log("No need to Set State any more ");
+}
+
+}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
 imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}
 /> </div>);
 else   
