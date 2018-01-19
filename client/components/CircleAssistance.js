@@ -36,15 +36,15 @@ this.radius=0;
 this.nStartX=0;
 this.nStartY=0;
 this.isDrawing=false;
-this.imageData=props.opState.active.data;
+this.imageData=props.opState.original.data;
 this.image={};
 this.imgWidth=props.imgWidth;
 this.imgHeight=props.imgHeight;
-this.callMyServer=this.callMyServer.bind(this);
-this.assistanceView={};//View for the assistance ( Original Image ) 
+
 this.scaleX=props.cWidth/props.imgWidth;
 this.scaleY=props.cHeight/props.imgHeight;
-this.state=({imgData:props.opState.active.data,width:props.cWidth,height:props.cHeight,imgWidth:props.imgWidth,imgHeight:props.imgHeight});
+this.state=({imgData:props.opState.original.data,width:props.cWidth,height:props.cHeight,imgWidth:props.imgWidth,imgHeight:props.imgHeight});
+this.orgicanvas=props.orgicanvas;
 this.currentActive=false;
 this.handleTouchStart=this.handleTouchStart.bind(this);
 this.handleTouchEnd=this.handleTouchEnd.bind(this);
@@ -52,42 +52,16 @@ this.handleTouchMove=this.handleTouchMove.bind(this);
 
 }
 
-
-
-callMyServer(){
-
-
-console.log("Calling Server Broo");
-console.log("startY",this.nStartY);
-console.log("startX",this.nStartX);
-console.log("radius",this.radius);
-
-this.currentActive=false;
-
-this.props.opAction('Circle',{
-startY:Math.floor(this.nStartY/this.scaleY),
-startX:Math.floor(this.nStartX/this.scaleX),
-radius:this.radius,
-rgb:hexToRgb(this.props.currentColor)
-},this.props.socketId);
-
-this.assistanceView.currentActive=false;
-this.assistanceView.externalUpdateCanvas();
-
-
-}
-
-
 componentWillReceiveProps(nextProps) {
 console.log("Circle Next Recieve Props");
 console.log(this.currentActive);
+this.orgicanvas=nextProps.orgicanvas;
 
 if(this.currentActive)
 return;
 else{
-this.updateCanvas(nextProps.opState.active.data,nextProps.opState.width,nextProps.opState.height);
+this.updateCanvas(nextProps.opState.original.data,nextProps.opState.width,nextProps.opState.height);
 }
-
 }
 
 
@@ -95,9 +69,7 @@ updateCanvas(imgData,width,height){
 
 const ctx=this.refs.canvas.getContext('2d');
 this.imageData=imgData;
-
 console.log("Updating Canvas");
-
 var image=new Image();
 image.src="data:image/png;base64,"+this.imageData;
 var root=this;
@@ -130,39 +102,6 @@ this.handleMouseMove(touch);
 }
 
 
-recieveMouseDown(startX,startY)
-{
-this.nStartX=startX;
-this.nStartY=startY;
-this.isDrawing=true;
-this.radius=0;
-this.currentActive=true;
-}
-
-recieveMouseUp(){
-this.isDrawing=false;
-}
-
-
-plotCircle(startX,startY,radius,orgiref){
-
-const canvas=this.refs.canvas;
-const ctx=canvas.getContext('2d');
-
-ctx.clearRect(0, 0,this.props.cWidth,this.props.cHeight);
-ctx.drawImage(this.image,0,0,Math.floor(this.imgWidth*this.scaleX),Math.floor(this.imgHeight*this.scaleY));
-ctx.fillStyle = "rgba(0,0,0,0.3)";
-ctx.beginPath();
-ctx.arc(startX,startY,radius, 0, Math.PI*2);
-  ctx.fill();
-this.startX=startX;
-this.startY=startY;
-this.radius=radius;
-this.assistanceView=orgiref;
-
-}
-
-
 
 
 handleMouseDown(e){
@@ -174,6 +113,8 @@ this.nStartY = (e.clientY-parentOffset.top)/1;
   this.isDrawing = true;
   this.radius = 0;
 this.currentActive=true;
+this.orgicanvas.recieveMouseDown(this.nStartX,this.nStartY);
+
 }
 
 handleMouseMove(e){
@@ -206,6 +147,7 @@ ctx.beginPath();
   ctx.arc(this.nStartX, this.nStartY, this.radius, 0, Math.PI*2);
   ctx.fill();
 
+this.orgicanvas.plotCircle(this.nStartX, this.nStartY,this.radius,this);
 
 
 }
@@ -213,13 +155,22 @@ ctx.beginPath();
 handleMouseUp(e){
 
  this.isDrawing=false;
+this.orgicanvas.recieveMouseUp();
 
 }
 
 handleMouseOut(e){
 this.isDrawing=false;
+this.orgicanvas.recieveMouseUp();
 
 }
+
+
+externalUpdateCanvas(){
+console.log("Clearing External Canvas ");
+this.updateCanvas(this.state.imgData,this.state.imgWidth,this.state.imgHeight);
+}
+
 
  render() {
     return (
