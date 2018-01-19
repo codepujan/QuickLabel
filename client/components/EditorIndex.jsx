@@ -102,6 +102,7 @@ return(
 
 <OriginalAssister myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId}/>
 
+<div style={{flexDirection:'column'}}>
         <div style={{height:60}} onClick={(event)=>rootContext.callChildServer()}>
 
         Current Class :
@@ -109,6 +110,7 @@ return(
         <DrawCurrentSelection color={rootContext.state.currentColor}/>
         </div>
        <DrawColorSelection style={{marginLeft:20}} colorAction={rootContext.props.changeColor}/>
+</div>
         </div>
 <div onClick={(event)=>rootContext.props.operate("Completed",{
 base64:rootContext.props.operations.image.data,
