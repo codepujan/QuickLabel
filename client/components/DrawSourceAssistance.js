@@ -58,8 +58,6 @@ function rgbToHex(r,g,b){
 return (function(h){
 	return new Array(7-h.length).join("0")+h
 	})(bin.toString(16).toUpperCase())
-
-
 }
 
 
@@ -76,6 +74,7 @@ this.updateCanvas(this.state.imgData,this.state.width,this.state.height);
 }
 constructor(props){
 super(props);
+console.log("Orgi Canvas ",props.orgicanvas);
 this.handleMouseDown=this.handleMouseDown.bind(this);
 this.handleMouseUp=this.handleMouseUp.bind(this);
 this.handleMouseOut=this.handleMouseOut.bind(this);
@@ -117,6 +116,7 @@ this.canvasNode={};
 this.setchildCanvas=this.setchildCanvas.bind(this);
 this.scaleX=props.cWidth/props.imgWidth;
 this.scaleY=props.cHeight/props.imgHeight;
+this.orgicanvas=props.orgicanvas;
 this.state=({imgData:props.opState.original.data,width:props.imgWidth,height:props.imgHeight,zoomMode:false});
 
 
@@ -200,7 +200,8 @@ this.eraserMode=false;
 }
 
 componentWillReceiveProps(nextProps) {
-console.log("OpState",nextProps.opState);
+console.log("Meanshift Canvas on other side ",nextProps.orgicanvas);
+this.orgicanvas=nextProps.orgicanvas;
 
 if(this.currentActive)
 return;
@@ -298,6 +299,7 @@ this.draw(ctx);
 else{
 if(this.currX!=0&&this.currY!=0){
 	    this.pencilPoints.push({x:this.currX,y:this.currY});
+this.orgicanvas.recievePoints(this.pencilPoints);
 this.draw(ctx);
 }
 
@@ -311,10 +313,6 @@ draw(ctx) {
 
 ctx.clearRect(this.baseX,this.baseY, this.props.cWidth, this.props.cHeight);
 ctx.drawImage(this.image,this.baseX,this.baseY,Math.floor(this.imgWidth*this.scaleX*this.contextScale),Math.floor(this.imgHeight*this.scaleY*this.contextScale));
-
-
-
-
 for(var i=0;i<this.pencilPoints.length;i++){
   ctx.beginPath();
 // ctx.lineWidth=this.pencilWidth;

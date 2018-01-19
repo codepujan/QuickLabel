@@ -114,6 +114,8 @@ this.handlePinch=this.handlePinch.bind(this);
 this.handlePan=this.handlePan.bind(this);
 this.handlePinchEnd=this.handlePinchEnd.bind(this);
 this.handlePanEnd=this.handlePanEnd.bind(this);
+this.recievePoints=this.recievePoints.bind(this)
+this.recievePoints=this.recievePoints.bind(this);
 this.canvasNode={};
 this.setchildCanvas=this.setchildCanvas.bind(this);
 this.scaleX=props.cWidth/props.imgWidth;
@@ -185,6 +187,13 @@ this.adjustDeltaY=this.baseY;
 }
 
 
+recievePoints(message){
+const ctx=this.canvasNode.getContext('2d');
+
+this.pencilPoints=message;
+this.draw(ctx);
+
+}
 
 callMyServer(){
 

@@ -70,11 +70,14 @@ let operationAction=props.operationAction;
 let loadSpinnerAction=props.spinnerAction;
 let applyColor=props.activeColor;
 let socketId=props.socketId;
+let mThis=props.context;
+
 
 if(props.myState=="freeform")
 {
+console.log("Passing ",mThis.state.childref);
 return(<div className="theater"> <AssitanceCanvas opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
-imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId}
+imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref}
 /> </div>);
 }
 else{
@@ -161,13 +164,26 @@ let mThis=props.context;
 
 if(currentSelection=='rectangle')
         currentActiveChild=(<div className="theater"> 
- <DrawRectangleCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450}  imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}currentColor={applyColor} socketId={socketId}/></div>);
+ <DrawRectangleCanvas ref={(node)=>{
+mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450}  imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}currentColor={applyColor} socketId={socketId}/></div>);
 else if (currentSelection=='circle')
         currentActiveChild=(<div className="theater"> 
 <DrawCircleCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor} imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}/></div>);
 else if (currentSelection=='freeform')
         currentActiveChild=(<div className="theater"> 
-<DrawFreeFormCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
+<DrawFreeFormCanvas ref={(node)=>{
+mThis.childComp=node;
+if(mThis.state.childrefset=="set") 
+{
+console.log("Setting State of Mounted Chiled Ref ");
+mThis.setState({childref:node,childrefset:"unset"});
+}
+else{
+console.log("No need to Set State any more ");
+}
+
+}}
+ opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
 imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}
 /> </div>);
 else if (currentSelection=='magictouch')
@@ -292,10 +308,12 @@ if(this.state===undefined){
         currentSelection:'',
         currentColor:props.colors,
 	currentImageWidth:348, //full canvas width and height 
-	currentImageHeight:288
+	currentImageHeight:288,
+	childref:{},
+	childrefset:"set"
        }
 }
-this.childComp=null;
+this.childComp={};
 this.handleStateChange=this.handleStateChange.bind(this);
 this.callChildServer=this.callChildServer.bind(this);
 console.log("Before Loading Check",this.props.imagesets.current);
