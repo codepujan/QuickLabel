@@ -20,7 +20,7 @@ function getTouchPos(canvasDom, touchEvent) {
 }
 
 
-export default class DrawRectangleCanvas extends React.Component {
+export default class AssistanceRectangleCanvas extends React.Component {
 
 componentDidMount(){
 console.log("Rectangle Did Mount ");
@@ -45,66 +45,40 @@ this.rectWidth=0;
 this.rectHeight=0;
 this.startX=0;
 this.startY=0;
-this.imageData=props.opState.active.data;
+this.imageData=props.opState.original.data;
 this.imgWidth=props.imgWidth;
 this.imgHeight=props.imgHeight;
 this.image={};
-this.callMyServer=this.callMyServer.bind(this);
 this.scaleX=props.cWidth/props.imgWidth;
 this.scaleY=props.cHeight/props.imgHeight;
-this.state=({imgData:props.opState.active.data,width:props.cWidth,height:props.cHeight,imgWidth:props.imgWidth,imgHeight:props.imgHeight});
+this.orgicanvas=props.orgicanvas;
+this.state=({imgData:props.opState.original.data,width:props.cWidth,height:props.cHeight,imgWidth:props.imgWidth,imgHeight:props.imgHeight});
 this.lineWidth=5;
 this.lineColor="#ffffff";
 this.currentActive=false;
-this.recievePoints=this.recievePoints.bind(this);
-
-this.assistanceView={};//View for the assistance ( Original Image ) 
 
 
-}
-
-
-
-callMyServer(){
-
-//payload.tly,message.payload.tlx,message.payload.bry,message.payload.brx
-//startY,startX,startY+height,startX+width 
-
-console.log("Calling Server Broo");
-console.log("Current Color ",this.props.currentColor);
-
-this.currentActive=false;
-//this.props.currentColor;
-//
-this.props.opAction('Rectangle',{
-tly:Math.floor(this.startY/this.scaleY),
-tlx:Math.floor(this.startX/this.scaleX),
-bry:Math.floor((this.startY+this.rectHeight)/this.scaleY),
-brx:Math.floor((this.startX+this.rectWidth)/this.scaleX),
-rgb:hexToRgb(this.props.currentColor)
-},this.props.socketId);
-this.assistanceView.currentActive=false;
-this.assistanceView.externalUpdateCanvas();
 
 }
 
 componentWillReceiveProps(nextProps) {
 console.log("RECTANGLE NEXT RECIEVE PROPS");
-console.log(this.currentActive)
+this.orgicanvas=nextProps.orgicanvas;
 if(this.currentActive)
 return; // HOPE THIS WORKS 
 else{
-this.updateCanvas(nextProps.opState.active.data,nextProps.opState.width,nextProps.opState.height);
+this.updateCanvas(nextProps.opState.original.data,nextProps.opState.width,nextProps.opState.height);
 }
+}
+
+externalUpdateCanvas(){
+this.updateCanvas(this.state.imgData,this.state.imgWidth,this.state.imgHeight);
 }
 
 
 updateCanvas(imgData,width,height){
-
-
 const ctx=this.refs.canvas.getContext('2d');
 this.imageData=imgData;
-
 var image=new Image();
 image.src="data:image/png;base64,"+this.imageData;
 var root=this;
@@ -126,6 +100,7 @@ const canvas=this.refs.canvas;
 
 this.isDown=true;
 this.currentActive=true;
+this.orgicanvas.recieveMouseDown(this.startX,this.startY);
 }
 
 
@@ -151,6 +126,8 @@ this.handleMouseMove(touch);
 handleMouseUp(e){
 
 this.isDown=false;
+this.orgicanvas.recieveMouseUp();
+
 }
 
 
@@ -160,38 +137,10 @@ this.isDown=false;
 
 }
 
-recieveMouseDown(startX,startY){
-
-this.startX=startX;
-this.startY=startY;
-this.isDown=true;
-this.currentActive=true;
-}
-
-recieveMouseUp(){
-
-this.isDown=false;
-
-}
-
-recievePoints(strokewidth,strokeheight,orgiref){
-const ctx=this.refs.canvas.getContext('2d');
- ctx.clearRect(0, 0,this.props.cWidth,this.props.cHeight);
-  //calculate the rectangle width/height based
- ctx.drawImage(this.image,0,0,Math.floor(this.imgWidth*this.scaleX),Math.floor(this.imgHeight*this.scaleY));
-      ctx.strokeStyle = this.lineColor;
-  ctx.lineWidth=this.lineWidth;
-      ctx.strokeRect(this.startX,this.startY, strokewidth, strokeheight);
-this.rectStartX=this.startX;
-this.rectStartY=this.startY;
-this.rectWidth=strokewidth;
-this.rectHeight=strokeheight;
-
-//Maybe remove this to somewhere else , why SET it every time 
-this.assistanceView=orgiref;
-}
 
 handleMouseMove(e){
+
+    // if we're not dragging, just return
 
 console.log("Mouse Move");
 if(!this.isDown)
@@ -221,6 +170,8 @@ ctx.lineWidth=this.lineWidth;
 
    ctx.strokeRect(this.startX,this.startY, strokewidth, strokeheight);
 
+//So , send this parameters on the other side 
+this.orgicanvas.recievePoints(strokewidth,strokeheight,this);
 this.rectStartX=this.startX;
 this.rectStartY=this.startY;
 this.rectWidth=strokewidth;

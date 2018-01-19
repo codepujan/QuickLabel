@@ -198,6 +198,9 @@ console.log("Deactivating Eraser");
 this.eraserMode=false;
 
 }
+externalUpdateCanvas(){
+this.updateCanvas(this.state.imgData,this.state.width,this.state.height);
+}
 
 componentWillReceiveProps(nextProps) {
 console.log("Meanshift Canvas on other side ",nextProps.orgicanvas);

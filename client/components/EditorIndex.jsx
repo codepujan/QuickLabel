@@ -16,7 +16,10 @@ import {HashLoader} from 'react-spinners';
 
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 
-import AssitanceCanvas from './DrawSourceAssistance.js';
+//All the assistance views 
+
+import FreeFormAssistanceCanvas from './FreeFormAssistance.js';
+import RectangleAssistanceCanvas from './RectangleAssistance.js';
 
  
 import CheckCircle from 'material-ui/svg-icons/action/check-circle';
@@ -75,8 +78,12 @@ let mThis=props.context;
 
 if(props.myState=="freeform")
 {
-console.log("Passing ",mThis.state.childref);
-return(<div className="theater"> <AssitanceCanvas opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
+return(<div className="theater"> <FreeFormAssistanceCanvas opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
+imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref}
+/> </div>);
+}else if(props.myState=="rectangle")
+{
+return(<div className="theater"> <RectangleAssistanceCanvas opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
 imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref}
 /> </div>);
 }
@@ -167,7 +174,17 @@ let mThis=props.context;
 if(currentSelection=='rectangle')
         currentActiveChild=(<div className="theater"> 
  <DrawRectangleCanvas ref={(node)=>{
-mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450}  imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}currentColor={applyColor} socketId={socketId}/></div>);
+mThis.childComp=node
+if(mThis.state.childrefset=="set")
+{
+console.log("Setting State of Mounted Chiled Ref ");
+mThis.setState({childref:node,childrefset:"unset"});
+}
+else{
+console.log("No need to Set State any more ");
+}
+}}
+ opState={operationState} opAction={operationAction} cWidth={450} cHeight={450}  imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}currentColor={applyColor} socketId={socketId}/></div>);
 else if (currentSelection=='circle')
         currentActiveChild=(<div className="theater"> 
 <DrawCircleCanvas ref={(node)=>{mThis.childComp=node}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor} imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}/></div>);
