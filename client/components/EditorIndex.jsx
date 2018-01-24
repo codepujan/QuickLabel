@@ -28,6 +28,8 @@ import CheckCircle from 'material-ui/svg-icons/action/check-circle';
 
 import Save from 'material-ui/svg-icons/action/store';
 
+import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
+
 
 //REDUX ad REDUX SC Part 
 import { connect } from 'react-redux'
@@ -37,6 +39,10 @@ const CHANGE_LOADING="LOADING";
 
 
 let CHANGE_COLOR="COLOR_CHANGE";
+
+const path_prefix = '/quicklabel';
+
+
 
 const mapStateToProps = state => ({
   operations: state.operations,
@@ -58,7 +64,11 @@ dispatch(socketEmit({
 ,
   changeColor:(color)=>dispatch({type:CHANGE_COLOR,payload:color}),
   startLoading:()=>dispatch({type:CHANGE_LOADING}),
-  changeImage:()=>dispatch({type:"CHANGE"})
+  changeImage:()=>dispatch({type:"CHANGE"}),
+  goBack:()=>{
+	dispatch({type:"NAVIGATE_IMAGE_SET"})
+	dispatch(push(`${path_prefix}/imageSets`))
+	}
 })
 
 
@@ -133,23 +143,37 @@ return(
        <DrawColorSelection style={{marginLeft:20}} colorAction={rootContext.props.changeColor}/>
 </div>
         </div>
-<div onClick={(event)=>rootContext.props.operate("Completed",{
+<div onClick={
+(event)=>
+{
+rootContext.props.operate("Completed",{
 base64:rootContext.props.operations.image.data,
 userid:rootContext.props.userinfo.userid,
 datasetid:rootContext.props.imagesets.current,
 imageid:rootContext.props.operations.currentImageId
-})}>
+},rootContext.props.communication.communicationId)
+rootContext.props.goBack();
+
+}
+
+}>
   <FloatingActionButton style={{position:"absolute",
    bottom:0,
    right:0,marginRight:20,marginBottom:20,justifyContent:'flex-end'}}>
       <CheckCircle />
     </FloatingActionButton>
 </div>
-<div onClick={(event)=>rootContext.props.operate("Save",{
+<div onClick={(event)=>
+{
+rootContext.props.operate("Save",{
 userid:rootContext.props.userinfo.userid,
 datasetid:rootContext.props.imagesets.current,
 imageid:rootContext.props.operations.currentImageId
-})}>
+},rootContext.props.communication.communicationId)
+rootContext.props.goBack();
+}
+}
+>
   <FloatingActionButton style={{position:"absolute",
    bottom:0,
    left:0,marginLeft:20,marginBottom:20,justifyContent:'flex-start'}}>

@@ -5,6 +5,9 @@ console.log("Answer Type",action.type);
 console.log("New Reply I got ",action.payload);
   switch (action.type) {
   case 'REPLY':{
+//console.log("On Reducer");
+//console.log("Orignal ",action.payload.orgi);
+//console.log("ACtive",action.payload.data);
   return Object.assign({},state,{image:action.payload,boundary:[],original:action.payload.orgi,width:action.payload.width,height:action.payload.height,active:action.payload.data});
 }
 case 'BOUNDARY':{
