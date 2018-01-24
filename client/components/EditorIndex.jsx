@@ -213,10 +213,10 @@ if(currentSelection=='rectangle')
         currentActiveChild=(<div className="theater"> 
  <DrawRectangleCanvas ref={(node)=>{
 mThis.childComp=node
-if(mThis.state.childrefset=="set")
+if(mThis.state.childrefset!="rectangle")
 {
 console.log("Setting State of Mounted Chiled Ref ");
-mThis.setState({childref:node,childrefset:"unset"});
+mThis.setState({childref:node,childrefset:"rectangle"});
 }
 else{
 console.log("No need to Set State any more ");
@@ -227,10 +227,10 @@ else if (currentSelection=='circle')
         currentActiveChild=(<div className="theater"> 
 <DrawCircleCanvas ref={(node)=>{
 mThis.childComp=node
-if(mThis.state.childrefset=="set")
+if(mThis.state.childrefset!="circle")
 {
 console.log("Setting State of Mounted Chiled Ref ");
-mThis.setState({childref:node,childrefset:"unset"});
+mThis.setState({childref:node,childrefset:"circle"});
 }
 else{
 console.log("No need to Set State any more ");
@@ -240,10 +240,10 @@ else if (currentSelection=='freeform')
         currentActiveChild=(<div className="theater"> 
 <DrawFreeFormCanvas ref={(node)=>{
 mThis.childComp=node;
-if(mThis.state.childrefset=="set") 
+if(mThis.state.childrefset!="freeform") 
 {
 console.log("Setting State of Mounted Chiled Ref ");
-mThis.setState({childref:node,childrefset:"unset"});
+mThis.setState({childref:node,childrefset:"freeform"});
 }
 else{
 console.log("No need to Set State any more ");
@@ -257,10 +257,10 @@ else if (currentSelection=='magictouch')
 	currentActiveChild=(<div className="theater"> 
 <MagicTouchToolCanvas ref={(node)=>{
 mThis.childComp=node
-if(mThis.state.childrefset=="set")
+if(mThis.state.childrefset!="magictouch")
 {
 console.log("Setting State of Mounted Chiled Ref ");
-mThis.setState({childref:node,childrefset:"unset"});
+mThis.setState({childref:node,childrefset:"magictouch"});
 }
 else{
 console.log("No need to Set State any more ");
