@@ -1,14 +1,11 @@
 //Maybe the initial state should  be some localimag e, saying Instructipn or sth like that 
-let initialState={image:{},boundary:[],currentImageId:'',original:{},width:0,height:0,active:{},segmented:true};
+let initialState={image:{},boundary:[],currentImageId:'',original:{},width:0,height:0,active:{},segmented:true,notes:''};
 export const operations=(state=initialState, action) => {
 console.log("Answer Type",action.type);
 console.log("New Reply I got ",action.payload);
   switch (action.type) {
   case 'REPLY':{
-//console.log("On Reducer");
-//console.log("Orignal ",action.payload.orgi);
-//console.log("ACtive",action.payload.data);
-  return Object.assign({},state,{image:action.payload,boundary:[],original:action.payload.orgi,width:action.payload.width,height:action.payload.height,active:action.payload.data});
+  return Object.assign({},state,{image:action.payload,boundary:[],original:action.payload.orgi,width:action.payload.width,height:action.payload.height,active:action.payload.data,notes:action.payload.note});
 }
 case 'BOUNDARY':{
 console.log("Boundary Data I Got ",action.payload);

@@ -28,6 +28,10 @@ import CheckCircle from 'material-ui/svg-icons/action/check-circle';
 
 import Save from 'material-ui/svg-icons/action/store';
 
+
+import Reset from 'material-ui/svg-icons/navigation/refresh';
+
+
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
 
 
@@ -129,7 +133,7 @@ return(
      <DrawToolbar context={rootContext}/>
         </div>
 <div id="stage">
-        <DrawingComponent myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} />
+        <DrawingComponent myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} userinfo={rootContext.props.userinfo} imagesets={rootContext.props.imagesets} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} />
 
 <OriginalAssister myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId}/>
 
@@ -174,6 +178,7 @@ rootContext.props.goBack();
 }
 }
 >
+
   <FloatingActionButton style={{position:"absolute",
    bottom:0,
    left:0,marginLeft:20,marginBottom:20,justifyContent:'flex-start'}}>
@@ -181,7 +186,25 @@ rootContext.props.goBack();
     </FloatingActionButton>
 </div>
 
+<div onClick={(event)=>
+{
+rootContext.props.operate("Reset",{
+userid:rootContext.props.userinfo.userid,
+datasetid:rootContext.props.imagesets.current,
+imageid:rootContext.props.operations.currentImageId
+},rootContext.props.communication.communicationId)
+//No need to go back or anything
+}
+}>
+<FloatingActionButton style={{position:"absolute",
+   bottom:0,
+   left:0,marginLeft:100,marginBottom:20,justifyContent:'flex-start'}}>
+      <Reset />
+    </FloatingActionButton>
 
+
+
+</div>
 
 
 </div>
@@ -202,6 +225,8 @@ function DrawingComponent(props){
 
 let currentSelection=props.myState;
 let operationState=props.operationState;
+let imagesets=props.imagesets;
+let userinfo=props.userinfo;
 let operationAction=props.operationAction;
 let loadSpinnerAction=props.spinnerAction;
 let applyColor=props.activeColor;
@@ -273,6 +298,7 @@ else
  currentActiveChild=(<div className="theater"> 
 <NormalCanvas  opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} spinnerStart={loadSpinnerAction}
 imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}
+imagesets={imagesets} userinfo={userinfo}
 />
 </div>
 )
