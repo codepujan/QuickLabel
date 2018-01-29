@@ -10,6 +10,7 @@ import {Link} from 'react-router-dom';
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
 
 
+import Snackbar from 'material-ui/Snackbar';
 
 
 import axios from 'axios';
@@ -57,7 +58,9 @@ console.log("Login Mounted Bro ");
  this.state={
       username:'',
       password:'',
-      loggin_spinner:false
+      loggin_spinner:false,
+	snack_message:'',
+	snack_visible:false
     }
 
 this.handleClick=this.handleClick.bind(this);
@@ -70,6 +73,12 @@ render() {
 if(!(this.state.loggin_spinner)){
     return (
      <div style={{textAlign: 'center'}}>
+
+	<Snackbar
+	open={this.state.snack_visible}
+	message={this.state.snack_message}
+	autoHideDuration={4000}
+	onRequestClose={()=>{this.setState({snack_visible:false})}}/>
        <MuiThemeProvider>
         <div id="loginregister">
          <TextField
@@ -103,14 +112,7 @@ return (<div class='loader'>
 
 handleClick(event){
         var self=this;
-
-//console.log(this.props.communication.communicationId);
-
-//this.props.mockOperation(this.props.communication.communicationId);
-
-
 	this.setState({loggin_spinner:true});
-
 	axios.get(userLoginURL,
 {
 params:{
@@ -124,9 +126,23 @@ password:this.state.password
 // Because , we will move Forward to next Screen Anyways
 console.log("STATUS",response.data)
 this.setState({loggin_spinner:false});
-self.props.setUserDetails(this.state.username);
-self.props.changeNavigation();
-self.props.moveForward();
+
+if(response.data.errorCode==-1){
+//self.props.setUserDetails(this.state.username);
+//self.props.changeNavigation();
+//self.props.moveForward();
+console.log("Login Succesful ");
+}else if(response.data.errorCode==110){
+
+console.log("User with this Crdentials not found ");
+this.setState({ snack_message:'User with following credentials not found ',snack_visible:true});
+}else if(response.data.errorCode==112){
+
+console.log("Wrong Password");
+this.setState({ snack_message:'The Username and Password combination do not match . Please Re- Enter Again ',snack_visible:true});
+
+
+}
 
 })
 .catch((error) => {
