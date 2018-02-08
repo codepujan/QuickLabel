@@ -22,7 +22,6 @@ import EditorIndex from './components/EditorIndex.jsx';
 
 import ColorDataSet from './components/ColorDataSet.jsx';
 
-import GalleryTest from './components/GalleryTest.jsx';
 
 import CreateDataSetWizard from './components/CreateDataSetWizard.jsx';
 
@@ -55,8 +54,10 @@ import {NAVIGATE_DATA_SET,NAVIGATE_PUBLIC_DATA_SET,NAVIGATE_CREATE_DATA_SET,NAVI
  * Entirely Temporary 
  */
 
+const GET_CLIENTID="GET_CLIENTID";
 
 import TestHammer from './components/HammerTest.jsx';
+
 
 
 function ContextualAppBar(props){
@@ -102,6 +103,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 class RouteComponent extends React.Component{
 
+
 render(){
 return(
 <Switch>
@@ -123,6 +125,12 @@ return(
 }
 
 export default class AppMain extends React.Component{
+
+componentDidMount(){
+console.log("Requesting Client ID ");
+this.props.store.dispatch({type:GET_CLIENTID});
+
+}
 
  constructor(props) {
     super(props);

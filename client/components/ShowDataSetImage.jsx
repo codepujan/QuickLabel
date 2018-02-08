@@ -46,7 +46,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps=dispatch=>({
 
-downloadInitial:(userId,datasetId)=>dispatch({type:IMAGESET_REQUEST_BY_DATASET,payload:{userId:userId,dataSetId:datasetId}}),
+downloadInitial:(userId,datasetId,clientId)=>dispatch({type:IMAGESET_REQUEST_BY_DATASET,payload:{userId:userId,dataSetId:datasetId,clientid:clientId}}),
 setEditorImage:(imageId)=>dispatch({type:SET_EDITOR_IMAGE,payload:imageId}),
 navigateEditor:()=>dispatch(push(`${path_prefix}/editor`)),
 navigate:()=>dispatch({type:NAVIGATE_EDITOR}),
@@ -95,7 +95,7 @@ console.log("Requesting Image to ",imageRequestURL);
 
 console.log("Dataset Name ",this.props.imagesets.current);
 
-this.props.downloadInitial(this.props.userinfo.userid,this.props.imagesets.current);
+this.props.downloadInitial(this.props.userinfo.userid,this.props.imagesets.current,this.props.userinfo.clientid.clientId);
 
 }
 

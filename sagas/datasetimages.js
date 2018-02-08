@@ -1,7 +1,7 @@
 import {takeEvery,delay} from 'redux-saga';
 import {put,call,fork} from 'redux-saga/effects';
 
-let imageRequestURL="https://eskns.com/fileUploader/";
+let imageRequestURL="https://eskns.com/imagesbyDataSet/";
 
 const IMAGESET_OBTAINED="IMAGESET_OBTAINED";
 const IMAGESET_OBTAINED_FAILURE="IMAGESET_OBTAINED_FAILURE";
@@ -12,16 +12,15 @@ const IMAGESET_LOADING="IMAGESET_LOADING";
 
 import axios from 'axios';
 
-const getImageSetsApi=(dataSetId,userId)=>{
+const getImageSetsApi=(dataSetId,userId,clientId)=>{
 
 console.log("SAGAS REQUESTING ",imageRequestURL);
 
-return axios.get(imageRequestURL,
+return axios.post(imageRequestURL,
 {
-params:{
 dataset:dataSetId,
-userid:userId
-}
+userid:userId,
+clientId:clientId
 }).then((response)=>response.data).catch((error)=>{
 console.log("Error Alert ",error);
 throw(error);
@@ -34,7 +33,7 @@ console.log(data.payload.userId);
 try{
 
 yield put({type:IMAGESET_LOADING});
-let sets=yield call(getImageSetsApi,data.payload.dataSetId,data.payload.userId);
+let sets=yield call(getImageSetsApi,data.payload.dataSetId,data.payload.userId,data.payload.clientid);
 
 
 yield put({type:IMAGESET_OBTAINED,payload:sets});

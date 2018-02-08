@@ -1,4 +1,5 @@
 import React from 'react';
+import ScaledImage from 'react-image-resizer';
 
 
 //REDUX ad REDUX SC Part 
@@ -24,14 +25,15 @@ function getTouchPos(canvasDom, touchEvent) {
 
 
 
-function drawSelectedBoundary(boundaries,ctx,scaleX,scaleY){
-console.log("Boundaries");
+function drawSelectedBoundary(boundaries,ctx,scaleX,scaleY,historyActive){
 
-console.log(boundaries);
+
+console.log("History Active Index is ",historyActive);
+
 if(boundaries.length==0)
 return;
 
- for(var i=0;i<boundaries.length;i++){
+ for(var i=0;i<historyActive;i++){
   for(var j=0;j<boundaries[i].length;j++){
           ctx.beginPath();
       ctx.arc(Math.floor(boundaries[i][j].x*scaleX),Math.floor(boundaries[i][j].y*scaleY),2, 0, 2 * Math.PI, false);
@@ -48,15 +50,22 @@ export default class MagicTouchToolCanvas extends React.Component {
 componentDidMount(){
 this.updateCanvas(this.imageData);
 if(this.state.imgData!=undefined)
-this.updateCanvas(this.state.imgData,this.state.imgWidth,this.state.imgHeight,this.state.boundary);
+this.updateCanvas(this.state.imgData,this.state.imgWidth,this.state.imgHeight,this.state.boundary,this.activeHistory);
 
 }
 
 componentWillReceiveProps(nextProps) {
-this.updateCanvas(nextProps.opState.active.data,nextProps.opState.width,nextProps.opState.height,nextProps.opState.boundary);
+
+console.log("Next Props",nextProps);
+this.activeHistory=nextProps.opState.activeboundaryIndex;
+console.log("Active History index is ",this.activeHistory);
+
+this.updateCanvas(nextProps.opState.active.data,nextProps.opState.width,nextProps.opState.height,nextProps.opState.boundary,nextProps.opState.activeboundaryIndex);
 }
 
-updateCanvas(imgData,width,height,boundaries){
+updateCanvas(imgData,width,height,boundaries,activeHistory){
+
+console.log("History Index inside Canvas ",activeHistory);
 
 const ctx=this.refs.canvas.getContext('2d');
 this.imageData=imgData;
@@ -66,7 +75,7 @@ var root=this;
 image.onload=function(){
 root.image=image;
 ctx.drawImage(root.image,0,0,Math.floor(width*root.scaleX),Math.floor(height*root.scaleY));
-drawSelectedBoundary(boundaries,ctx,root.scaleX,root.scaleY);
+drawSelectedBoundary(boundaries,ctx,root.scaleX,root.scaleY,activeHistory);
 }
 }
 
@@ -82,9 +91,12 @@ this.magicPoints=[];
 this.image={};
 this.scaleX=props.cWidth/props.imgWidth;
 this.scaleY=props.cHeight/props.imgHeight;
-
+this.activeHistory=this.props.opState.activeboundaryIndex;
 
 this.state=({imgData:props.opState.active.data,width:props.cWidth,height:props.cHeight,boundary:props.opState.boundary,imgWidth:props.imgWidth,imgHeight:props.imgHeight});
+
+this.undoSelection=this.undoSelection.bind(this);
+this.redoSelection=this.redoSelection.bind(this);
 
 }
 
@@ -128,15 +140,32 @@ x:Math.floor(myx/this.scaleX)
 },this.props.socketId);
 }
 
+undoSelection(){
+console.log("Undoing Selection ");
+
+this.props.undoSelection();
+}
+
+
+redoSelection(){
+this.props.redoSelection();
+}
 
   render() {
 
     return (
+	<div>
      <div style={{textAlign: 'center'}}>
 
           <canvas ref="canvas" width={this.props.cWidth} height={this.props.cHeight} onMouseDown={this.handleMouseDown}
 onTouchStart={this.handleTouchStart}/>
-        </div>);
+</div>
+
+<div style={{marginTop:20}}>
+
+        <ExtraTools context={this}/>
+        </div>
+	</div>);
 }
 }
 
@@ -149,4 +178,36 @@ onTouchStart={this.handleTouchStart}/>
     };
   }
 
+function ExtraTools(props){
+let mainContext=props.context;
+return(
+<div className="freeformtoolbox">
+<div className="extratool"
+onClick={(event)=>{
+mainContext.undoSelection();
+}}
+>
 
+<ScaledImage src={require('../../images/Undo.png')}
+width={40}
+height={40}
+/>
+</div>
+
+
+<div className="extratool"
+onClick={(event)=>{
+mainContext.redoSelection()
+}}
+>
+<ScaledImage src={require('../../images/Redo.png')}
+width={40}
+height={40}
+/>
+</div>
+
+
+
+</div>
+);
+}

@@ -30,7 +30,8 @@ const path_prefix = '/quicklabel';
 
 const SET_CURRENT_USER_ID="SET_CURRENT_USERID";
 const mapStateToProps = state => ({
-communication:state.communication
+communication:state.communication,
+userinfo:state.userinfo
 });
 
 
@@ -54,7 +55,7 @@ class Login extends React.Component{
 constructor(props){
 super(props);
 console.log("Login Mounted Bro ");
-
+console.log(this.props.userinfo);;
  this.state={
       username:'',
       password:'',
@@ -113,13 +114,23 @@ return (<div class='loader'>
 handleClick(event){
         var self=this;
 	this.setState({loggin_spinner:true});
-	axios.get(userLoginURL,
+	console.log("Inside Click ",this.props.userinfo.clientid);
+	console.log(this.props.userinfo.clientid);
+
+console.log(this.state.username);
+console.log(this.state.password);
+
+console.log("UID",this.props.userinfo.clientid.clientId);
+
+axios.defaults.withCredentials=true;
+
+	axios.post(userLoginURL,
 {
-params:{
 username:this.state.username,
-password:this.state.password
+password:this.state.password,
+clientId:this.props.userinfo.clientid.clientId
 }
-}).then((response)=>{
+).then((response)=>{
 
 
 //No need to set State back again 
@@ -127,11 +138,13 @@ password:this.state.password
 console.log("STATUS",response.data)
 this.setState({loggin_spinner:false});
 
-if(response.data.errorCode==-1){
-//self.props.setUserDetails(this.state.username);
-//self.props.changeNavigation();
-//self.props.moveForward();
 console.log("Login Succesful ");
+//if(response.data.errorCode==-1){
+self.props.setUserDetails(this.state.username);
+self.props.changeNavigation();
+self.props.moveForward();
+
+/**
 }else if(response.data.errorCode==110){
 
 console.log("User with this Crdentials not found ");
@@ -143,6 +156,8 @@ this.setState({ snack_message:'The Username and Password combination do not matc
 
 
 }
+
+**/
 
 })
 .catch((error) => {

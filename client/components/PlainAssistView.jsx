@@ -22,14 +22,14 @@ function getTouchPos(canvasDom, touchEvent) {
   };
 }
 
-function drawSelectedBoundary(boundaries,ctx,scaleX,scaleY){
+function drawSelectedBoundary(boundaries,ctx,scaleX,scaleY,historyActive){
 console.log("Boundaries");
 
 console.log(boundaries);
 if(boundaries.length==0)
 return;
 
- for(var i=0;i<boundaries.length;i++){
+ for(var i=0;i<historyActive;i++){
   for(var j=0;j<boundaries[i].length;j++){
           ctx.beginPath();
       ctx.arc(Math.floor(boundaries[i][j].x*scaleX),Math.floor(boundaries[i][j].y*scaleY),2, 0, 2 * Math.PI, false);
@@ -48,15 +48,18 @@ export default class MagicTouchToolCanvas extends React.Component {
 componentDidMount(){
 this.updateCanvas(this.imageData);
 if(this.state.imgData!=undefined)
-this.updateCanvas(this.state.imgData,this.state.imgWidth,this.state.imgHeight,this.state.boundary);
+this.updateCanvas(this.state.imgData,this.state.imgWidth,this.state.imgHeight,this.state.boundary,this.activeHistory);
 
 }
 
 componentWillReceiveProps(nextProps) {
-this.updateCanvas(nextProps.opState.original.data,nextProps.opState.width,nextProps.opState.height,nextProps.opState.boundary);
+this.activeHistory=nextProps.opState.activeboundaryIndex;
+
+this.updateCanvas(nextProps.opState.original.data,nextProps.opState.width,nextProps.opState.height,nextProps.opState.boundary,nextProps.opState.activeboundaryIndex);
+
 }
 
-updateCanvas(imgData,width,height,boundaries){
+updateCanvas(imgData,width,height,boundaries,activeHistory){
 
 const ctx=this.refs.canvas.getContext('2d');
 this.imageData=imgData;
@@ -66,7 +69,7 @@ var root=this;
 image.onload=function(){
 root.image=image;
 ctx.drawImage(root.image,0,0,Math.floor(width*root.scaleX),Math.floor(height*root.scaleY));
-drawSelectedBoundary(boundaries,ctx,root.scaleX,root.scaleY);
+drawSelectedBoundary(boundaries,ctx,root.scaleX,root.scaleY,activeHistory);
 }
 }
 
@@ -79,7 +82,7 @@ this.magicPoints=[];
 this.image={};
 this.scaleX=props.cWidth/props.imgWidth;
 this.scaleY=props.cHeight/props.imgHeight;
-
+this.activeHistory=this.props.opState.activeboundaryIndex;
 
 this.state=({imgData:props.opState.original.data,width:props.cWidth,height:props.cHeight,boundary:props.opState.boundary,imgWidth:props.imgWidth,imgHeight:props.imgHeight});
 

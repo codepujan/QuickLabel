@@ -6,4 +6,4 @@ export * from './imagesets'
 export * from './navigationState'
 export * from './usersessions'
 export * from './socketCommunication'
-
+export * from './history'

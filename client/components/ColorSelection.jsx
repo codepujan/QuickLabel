@@ -2,6 +2,9 @@ import React from 'react';
 
 import {render} from 'react-dom';
 
+let labelsetAddURL="https://eskns.com/labelColor/";
+
+import axios from 'axios';
 
 export default class ColorSelection extends React.Component{
 
@@ -9,13 +12,27 @@ export default class ColorSelection extends React.Component{
 constructor(props){
 super(props);
 this.state={
-classLabels:[{label:"corridor",hex:'#4D4D4D'},{label:"door",hex:'#999999'},{label:"window",hex:'#FFFFFF'},{label:"obstacle",hex:'#F44E3B'},{label:"pavement",hex:'#FE9200'}]
+classLabels:[]
 }
 this.createColorsList=this.createColorsList.bind(this);
 this.changeCurrentColor=this.changeCurrentColor.bind(this);
+this.downloadLabelSettings();
 
 } 
 
+
+downloadLabelSettings(){
+console.log("Downloading Label Settings ");
+
+axios.get(labelsetAddURL).then((response) =>{
+let labelSet=[];
+for(var i=0;i<response.data.length;i++){
+labelSet.push({label:response.data[i].label,hex:response.data[i].colorhex});
+}
+this.setState({classLabels:labelSet});
+})
+
+}
 changeCurrentColor(changeColor){
 this.props.colorAction(changeColor);
 

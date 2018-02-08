@@ -41,6 +41,8 @@ import { socketEmit } from 'redux-saga-sc'
 
 const CHANGE_LOADING="LOADING";
 
+const INCREASE_HISTORY_INDEX='INCREASE_HISTORY_INDEX';
+const DECREASE_HISTORY_INDEX='DECREASE_HISTORY_INDEX';
 
 let CHANGE_COLOR="COLOR_CHANGE";
 
@@ -54,7 +56,8 @@ const mapStateToProps = state => ({
   appState:state.appState,
   imagesets:state.imagesets,
  userinfo:state.userinfo,
- communication:state.communication
+ communication:state.communication,
+ history:state.history
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -72,6 +75,12 @@ dispatch(socketEmit({
   goBack:()=>{
 	dispatch({type:"NAVIGATE_IMAGE_SET"})
 	dispatch(push(`${path_prefix}/imageSets`))
+	},
+   undoSelection:()=>{
+	dispatch({type:DECREASE_HISTORY_INDEX});	
+},
+    redoSelection:()=>{
+	dispatch({type:INCREASE_HISTORY_INDEX});
 	}
 })
 
@@ -90,7 +99,7 @@ let loadSpinnerAction=props.spinnerAction;
 let applyColor=props.activeColor;
 let socketId=props.socketId;
 let mThis=props.context;
-
+let historyState=props.history;
 
 if(props.myState=="freeform")
 {
@@ -110,7 +119,7 @@ imgWidth={operationState.width} imgHeight={operationState.height} socketId={sock
 }else if(props.myState=="magictouch")
 {
 return(<div className="theater"> <PlainAssistView opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
-imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref}
+imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref} history={historyState}
 /> </div>);
 
 
@@ -133,9 +142,9 @@ return(
      <DrawToolbar context={rootContext}/>
         </div>
 <div id="stage">
-        <DrawingComponent myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} userinfo={rootContext.props.userinfo} imagesets={rootContext.props.imagesets} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} />
+        <DrawingComponent myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} userinfo={rootContext.props.userinfo} imagesets={rootContext.props.imagesets} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} history={rootContext.props.history} undoSelection={rootContext.props.undoSelection}/>
 
-<OriginalAssister myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId}/>
+<OriginalAssister myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} history={rootContext.props.history}/>
 
 <div style={{flexDirection:'column'}}>
         <div style={{height:60}} onClick={(event)=>rootContext.callChildServer()}>
@@ -231,8 +240,11 @@ let operationAction=props.operationAction;
 let loadSpinnerAction=props.spinnerAction;
 let applyColor=props.activeColor;
 let socketId=props.socketId;
-console.log("Current Selection is ",currentSelection);
+let historyState=props.history;
 let mThis=props.context;
+let undoAction=props.undoSelection;
+let redoAction=props.redoSelection;
+
 
 if(currentSelection=='rectangle')
         currentActiveChild=(<div className="theater"> 
@@ -292,7 +304,7 @@ console.log("No need to Set State any more ");
 }
 
 }} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
-imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}
+imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId} history={historyState} undoSelection={undoAction} redoSelection={redoAction}
 /> </div>);
 else   
  currentActiveChild=(<div className="theater"> 

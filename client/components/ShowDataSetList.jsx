@@ -46,7 +46,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps=dispatch=>({
-downloadInitial:(userId)=>dispatch({type:LOAD_DATASET_BY_ID,payload:userId}),
+downloadInitial:(userId,clientId)=>dispatch({type:LOAD_DATASET_BY_ID,payload:{userid:userId,clientid:clientId}}),
 navigateImageSets:()=>dispatch(push(`${path_prefix}/imageSets`)),
 navigate:()=>dispatch({type:NAVIGATE_IMAGE_SET}),
 navigateCreateDataSets:()=>dispatch(push(`${path_prefix}/createDataSet`)),
@@ -84,7 +84,7 @@ this.props.communicate();
 requestImages(){
 
 console.log("Logged in User ",this.props.userinfo.userid);
-this.props.downloadInitial(this.props.userinfo.userid);
+this.props.downloadInitial(this.props.userinfo.userid,this.props.userinfo.clientid.clientId);
 
 }
 

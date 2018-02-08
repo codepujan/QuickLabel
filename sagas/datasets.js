@@ -13,12 +13,14 @@ import axios from 'axios';
 
 
 
-const getDataSetsApi=(userId)=>{
-return  axios.get(imageRequestURL,
+const getDataSetsApi=(userId,clientId)=>{
+console.log("User iD ",userId);
+console.log("Client ID ",clientId);
+
+return  axios.post(imageRequestURL,
 {
-params:{
-requestId:userId
-}
+requestId:userId,
+clientId:clientId
 }).then((response) =>response.data)
       .catch((error) => {
       console.log("Error Alert ",error);
@@ -33,7 +35,7 @@ export function* requestDataSets(userId){
 try{
 
 yield put({type:DATASET_LOADING});
-let sets=yield call(getDataSetsApi,userId.payload);
+let sets=yield call(getDataSetsApi,userId.payload.userid,userId.payload.clientid);
 
 
 yield put({type:DATASET_OBTAINED,payload:sets});

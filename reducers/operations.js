@@ -1,5 +1,7 @@
-//Maybe the initial state should  be some localimag e, saying Instructipn or sth like that 
-let initialState={image:{},boundary:[],currentImageId:'',original:{},width:0,height:0,active:{},segmented:true,notes:''};
+let initialState={image:{},boundary:[],currentImageId:'',original:{},width:0,height:0,active:{},segmented:true,notes:'',activeboundaryIndex:0};
+const INCREASE_HISTORY_INDEX='INCREASE_HISTORY_INDEX';
+const DECREASE_HISTORY_INDEX='DECREASE_HISTORY_INDEX';
+
 export const operations=(state=initialState, action) => {
 console.log("Answer Type",action.type);
 console.log("New Reply I got ",action.payload);
@@ -7,11 +9,32 @@ console.log("New Reply I got ",action.payload);
   case 'REPLY':{
   return Object.assign({},state,{image:action.payload,boundary:[],original:action.payload.orgi,width:action.payload.width,height:action.payload.height,active:action.payload.data,notes:action.payload.note});
 }
+
+case INCREASE_HISTORY_INDEX:{
+return{
+...state,
+activeboundaryIndex:state.activeboundaryIndex+1
+}
+}
+case DECREASE_HISTORY_INDEX:{
+return{
+...state,
+activeboundaryIndex:state.activeboundaryIndex-1
+}
+}
+
 case 'BOUNDARY':{
 console.log("Boundary Data I Got ",action.payload);
+
+let splicedArray=state.boundary
+splicedArray.splice(state.activeboundaryIndex); // up till the last 
+
+console.log("Spliced Array is ",splicedArray);
+
 return {
 ...state,
-boundary:[...state.boundary,action.payload.data]
+activeboundaryIndex:state.activeboundaryIndex+1,
+boundary:[...splicedArray,action.payload.data]
 }
 }
 
