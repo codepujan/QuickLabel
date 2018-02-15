@@ -18,6 +18,7 @@ import { connect } from 'react-redux';
 const path_prefix = '/quicklabel';
 
 const mapStateToProps = state => ({
+userinfo:state.userinfo
 });
 
 
@@ -114,7 +115,8 @@ classes:this.state.classes.split(','),
 description:this.state.description,
 tags:this.state.tags.split(','),
 name:this.state.name,
-total:this.state.total
+total:this.state.total,
+clientId:this.props.userinfo.clientid.clientId
 }).then((response) =>{
 console.log("DATASET_ADD",response.data)
 this.props.navigate();
