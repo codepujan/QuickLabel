@@ -211,6 +211,7 @@ margin:3px;
 display:flex;
 justify-content:center;
 border:3px solid #CCC;
+flex-direction:column;
 }
 
 #thumbnailDataSetImage:active{

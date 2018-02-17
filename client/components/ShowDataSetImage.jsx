@@ -8,7 +8,6 @@ import Image from 'react-image-resizer';
 
 import StackGrid from "react-stack-grid";
 
-import axios from 'axios';
 
 let imageRequestURL="https://eskns.com/fileUploader/";
 
@@ -19,13 +18,17 @@ import {Link} from 'react-router-dom';
 
 import {HashLoader} from 'react-spinners';
 
+import ScaledImage from 'react-image-resizer';
 
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
 const path_prefix = '/quicklabel';
 
+import axios from 'axios';
 
+const downloadSingleURL="https://eskns.com/downloadSingleImage/";
+ 
 import { connect } from 'react-redux'
 const IMAGESET_REQUEST_BY_DATASET="IMAGESET_REQUEST_BY_DATASET";
 const SET_EDITOR_IMAGE="EDITOR_IMAGE";
@@ -36,12 +39,15 @@ import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-ro
 import {NAVIGATE_EDITOR,NAVIGATE_IMAGE_UPLOADER} from '../../reducers/actions_const';
 
 
+import FileSaver from 'file-saver';
 
 const mapStateToProps = state => ({
  imagesets:state.imagesets,
  userinfo:state.userinfo
 });
 
+ let b64toBlob=require('b64-to-blob');
+  let contentType='image/png';
 
 
 const mapDispatchToProps=dispatch=>({
@@ -73,10 +79,37 @@ imageBuffers:[]
 
 this.requestImages();
 this.navigateImage=this.navigateImage.bind(this);
-
+this.downloadSingleImage=this.downloadSingleImage.bind(this);
 
 }
 
+
+
+downloadSingleImage(imageid){
+
+
+axios.post(downloadSingleURL,
+{
+dataset:this.props.imagesets.current,
+userId:this.props.userinfo.userid,
+clientId:this.props.userinfo.clientid.clientid,
+imageId:imageid
+}).then((response)=>{
+
+console.log(response.data);
+
+let blob=b64toBlob(response.data,contentType);
+//let blobURL=URL.createObjectURL(blob);
+//window.location=blobURL;
+//let  file=new Blob(response.data,{type:"image/jpg"});
+FileSaver.saveAs(blob,"firstDownload.jpg");
+}).catch((error)=>{
+console.log("Error Alert ",error);
+throw(error);
+
+});
+
+}
 
 
 navigateImage(imageId){
@@ -120,13 +153,24 @@ createImages(item){
 console.log(item);
 
 return(
-<div id="thumbnailDataSetImage" onClick={()=>{this.navigateImage(item.imageId)}}>
-        <Image src={"data:image/png;base64,"+item.data}
+<div id="thumbnailDataSetImage">
+        
+<div onClick={()=>{this.navigateImage(item.imageId)}}>
+<Image src={"data:image/png;base64,"+item.data}
 width={400}
 height={200}
 >
 
 </Image>
+
+</div>
+<div style={{marginTop:10}} onClick={()=>{this.downloadSingleImage(item.imageId)}}>
+
+<ScaledImage src={require('../../images/Download.png')}
+width={40}
+height={40}
+/>
+</div>
 
 </div>
 );

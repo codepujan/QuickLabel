@@ -133,9 +133,9 @@ clientId:this.props.userinfo.clientid.clientId
 ).then((response)=>{
 
 
-//No need to set State back again 
-// Because , we will move Forward to next Screen Anyways
-console.log("STATUS",response.data)
+
+console.log("Plain Response ",response);
+console.log("RESPONSE STATUS",response.data)
 this.setState({loggin_spinner:false});
 
 console.log("Login Succesful ");
@@ -162,6 +162,7 @@ this.setState({ snack_message:'The Username and Password combination do not matc
 })
 .catch((error) => {
       console.log("Error Alert ",error)
+      console.log(error.body);
           throw(error)
       })
 
