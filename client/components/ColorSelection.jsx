@@ -24,7 +24,7 @@ this.downloadLabelSettings();
 downloadLabelSettings(){
 console.log("Downloading Label Settings ");
 
-axios.get(labelsetAddURL).then((response) =>{
+axios.get(labelsetAddURL,{params:{database:this.props.currentDatabase}}).then((response) =>{
 let labelSet=[];
 for(var i=0;i<response.data.length;i++){
 labelSet.push({label:response.data[i].label,hex:response.data[i].colorhex});
@@ -53,8 +53,23 @@ return(
 render(){
 let mClassLabels=this.state.classLabels;
 let listColors=mClassLabels.map(this.createColorsList);
+if(mClassLabels.length==0){
+return(
+<div style={{marginTop:10}}>
+No Class Labels Yet. Go to Settings Menu for Configuration
+</div>
+)
+
+}else{
+
 return(
  <ul>{listColors}</ul>
 );
+
 }
+
+}
+
+
+
 }

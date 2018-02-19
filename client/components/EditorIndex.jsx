@@ -153,7 +153,7 @@ return(
         <br/>
         <DrawCurrentSelection color={rootContext.state.currentColor}/>
         </div>
-       <DrawColorSelection style={{marginLeft:20}} colorAction={rootContext.props.changeColor}/>
+       <DrawColorSelection style={{marginLeft:20}} colorAction={rootContext.props.changeColor} currentDatabase={rootContext.props.imagesets.current}/>
 </div>
         </div>
 <div onClick={
@@ -337,7 +337,7 @@ function DrawColorSelection(props){
 return(
 <div className="colorBox">
 
-<ColorSelection colorAction={props.colorAction}/>
+<ColorSelection colorAction={props.colorAction} currentDatabase={props.currentDatabase}/>
 
 </div>
 );

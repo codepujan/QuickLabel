@@ -11,10 +11,25 @@ import ReactTable from "react-table";
 
 import axios from 'axios';
 
+import { connect } from 'react-redux';
+
 
 let labelsetAddURL="https://eskns.com/labelColor/";
 
-export default class ColorDataSet extends React.Component{
+
+const mapStateToProps = state => ({
+imagesets:state.imagesets
+})
+
+
+const mapDispatchToProps = dispatch => ({
+
+
+
+})
+
+
+class ColorDataSet extends React.Component{
 
 constructor(props){
 super(props);
@@ -44,7 +59,7 @@ downloadLabelSettings(){
 //labelsetAddURL
 //TODO : DATABASE PARAMS : 
 
-axios.get(labelsetAddURL).then((response) =>{
+axios.get(labelsetAddURL,{params:{database:this.props.imagesets.current}}).then((response) =>{
 
 //response.data
 console.log("Color Set ",response.data);
@@ -179,3 +194,7 @@ const style = {
   margin: 15,
 };
 
+
+export default connect(
+mapStateToProps,
+mapDispatchToProps)(ColorDataSet)
