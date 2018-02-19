@@ -5,8 +5,29 @@ import {render} from 'react-dom';
 let labelsetAddURL="https://eskns.com/labelColor/";
 
 import axios from 'axios';
+ 
+import Image from 'react-image-resizer';
 
-export default class ColorSelection extends React.Component{
+import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
+
+import { connect } from 'react-redux';
+const NAVIGATE_SETTINGS="NAVIGATE_SETTINGS";
+
+
+const mapStateToProps= state =>({
+
+
+})
+
+
+const mapDispatchToProps= dispatch => ({
+navigateSettings:()=>dispatch({type:NAVIGATE_SETTINGS}),
+gotocolorSettings:()=>dispatch(push(`${path_prefix}/settings`))
+})
+
+const path_prefix = '/quicklabel';
+
+class ColorSelection extends React.Component{
 
 
 constructor(props){
@@ -55,15 +76,29 @@ let mClassLabels=this.state.classLabels;
 let listColors=mClassLabels.map(this.createColorsList);
 if(mClassLabels.length==0){
 return(
-<div style={{marginTop:10}}>
-No Class Labels Yet. Go to Settings Menu for Configuration
+<div style={{width:600,marginTop:30 ,flexDirection:'row'}}>
+<div>No Class Labels Yet.Configure
+</div>
+<div onClick={(event)=>{
+console.log("Going to color Settings ");
+this.props.navigateSettings();
+this.props.gotocolorSettings();
+}}>
+<Image src={require('../../images/Settings.png')}
+width={40}
+height={40}
+/>
+</div>
 </div>
 )
 
 }else{
 
 return(
+<div className="colorBox">
  <ul>{listColors}</ul>
+</div>
+
 );
 
 }
@@ -73,3 +108,8 @@ return(
 
 
 }
+
+
+export default connect(
+mapStateToProps,
+mapDispatchToProps)(ColorSelection)

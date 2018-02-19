@@ -13,6 +13,8 @@ import axios from 'axios';
 
 import { connect } from 'react-redux';
 
+import {goBack, push } from 'react-router-redux'
+
 
 let labelsetAddURL="https://eskns.com/labelColor/";
 
@@ -23,11 +25,13 @@ imagesets:state.imagesets
 
 
 const mapDispatchToProps = dispatch => ({
-
-
+goBack:()=>dispatch(goBack())
 
 })
 
+
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import CheckCircle from 'material-ui/svg-icons/action/check-circle';
 
 class ColorDataSet extends React.Component{
 
@@ -45,7 +49,7 @@ this.handleColorChange=this.handleColorChange.bind(this);
 this.handleSendServer=this.handleSendServer.bind(this);
 this.downloadLabelSettings=this.downloadLabelSettings.bind(this);
 
-//TODO : SAGIFY EVERYHdownloadLabelSetings(); 
+//TODO : SAGIFY EVERYHdownloadLabelSetings();/
 
 this.downloadLabelSettings();
 
@@ -107,7 +111,7 @@ let refer=this;
 let newArray=this.state.textdset;
 axios.post(labelsetAddURL,
 {
-dataSetName:'',
+database:this.props.imagesets.current,
 label:newLabel,
 colorhex:newColor
 }).then((response)=>{
@@ -146,7 +150,7 @@ console.log(this.state.textdset);
 let colorEntries=this.state.textdset.map(this.createExistingColor);
 
     return (
-	
+<div>	
      <div id="colorstage">
         <div className="existingTable">
 	<b> Existing Labels </b>
@@ -183,6 +187,19 @@ let colorEntries=this.state.textdset.map(this.createExistingColor);
            <RaisedButton label="Add Label " primary={true} style={style} onClick={(event) => this.handleSendServer()}/>
        </div>
        </MuiThemeProvider>
+</div>
+
+<div class="fab" onClick={(event)=>{
+//code for popping stack
+this.props.goBack(); 	
+}}>
+  <FloatingActionButton style={{position:"absolute",
+   bottom:0,
+   right:0,marginRight:20,marginBottom:20,justifyContent:'flex-end'}}>
+      <CheckCircle />
+    </FloatingActionButton>
+</div>
+
 
 
         </div>);

@@ -164,6 +164,7 @@ margin:3px;
 display:flex;
 justify-content:center;
 border:3px solid #CCC;
+width:130px;
 }
 
 #labelColor{

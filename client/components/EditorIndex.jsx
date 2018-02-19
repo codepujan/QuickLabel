@@ -324,7 +324,7 @@ function DrawCurrentSelection(color){
 console.log("Color is ",color);
 return(
 <div id="pickColor" role="button">
-<div style={{backgroundColor:color.color,width:'150px',height:'50px'}}></div>
+<div style={{backgroundColor:color.color,width:'100px',height:'50px'}}></div>
 </div>
 );
 
@@ -335,7 +335,7 @@ function DrawColorSelection(props){
 
 
 return(
-<div className="colorBox">
+<div>
 
 <ColorSelection colorAction={props.colorAction} currentDatabase={props.currentDatabase}/>
 
@@ -438,11 +438,23 @@ this.callSaveCompletedImage=this.callSaveCompletedImage.bind(this);
 
 console.log("Sending Socket Id ",this.props.communication.communicationId);
 
+
+console.log("Highermost Component Constructor Called ");
+
+
+console.log(this.props.operations.image);
+
+if(Object.keys(this.props.operations.image).length==0){
+
 this.props.operate('Load',{userId:this.props.userinfo.userid,datasetId:this.props.imagesets.current,imageId:this.props.operations.currentImageId},this.props.communication.communicationId);
 
 //PROPS ACTION FOR 
 this.props.startLoading();
-
+}
+else
+{
+//Tryna do what mavericks do 
+}
 }
 
 callChildServer(){
