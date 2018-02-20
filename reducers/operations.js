@@ -62,7 +62,7 @@ return Object.assign({},state,{active:state.image.data,segmented:true});
 }
 
 case 'OPERATE':{
-  return Object.assign({},state,{active:action.payload.data});
+  return Object.assign({},state,{active:action.payload.data,boundary:[],activeboundaryIndex:0});
 }
 
 case 'EDITOR_IMAGE':
@@ -75,6 +75,14 @@ case 'LOADER':
 console.log("Loader",action.payload.orgi);
 
 return Object.assign({},state,{image:action.payload,boundary:[],original:action.payload.orgi});
+
+}
+
+case 'CLEAR':
+{
+console.log("Freshening Up State ");
+
+return Object.assign({},initialState);
 
 }
 

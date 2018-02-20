@@ -57,7 +57,9 @@ setEditorImage:(imageId)=>dispatch({type:SET_EDITOR_IMAGE,payload:imageId}),
 navigateEditor:()=>dispatch(push(`${path_prefix}/editor`)),
 navigate:()=>dispatch({type:NAVIGATE_EDITOR}),
 navigateCreateNew:()=>dispatch(push(`${path_prefix}/imageUploader`)),
-navigateNew:()=>dispatch({type:NAVIGATE_IMAGE_UPLOADER})
+navigateNew:()=>dispatch({type:NAVIGATE_IMAGE_UPLOADER}),
+freshenUpState:()=>dispatch({type:'CLEAR'})
+
 });
 
 
@@ -76,7 +78,7 @@ offset:0,
 requestSize:5,
 imageBuffers:[]
 }
-
+this.props.freshenUpState();
 this.requestImages();
 this.navigateImage=this.navigateImage.bind(this);
 this.downloadSingleImage=this.downloadSingleImage.bind(this);

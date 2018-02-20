@@ -29,6 +29,7 @@ function drawSelectedBoundary(boundaries,ctx,scaleX,scaleY,historyActive){
 
 
 console.log("History Active Index is ",historyActive);
+console.log("Boundaries Length is ",boundaries.length);
 
 if(boundaries.length==0)
 return;
