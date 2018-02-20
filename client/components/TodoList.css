@@ -69,6 +69,17 @@ height:100px;
  flex-direction:row;
 }
 
+.instanceBox{
+background-color:#e6e6e6;
+ width:200px;
+ height:630px;
+ border-radius: 15px;
+ margin-left:10px;
+ margin-top:30px;
+display:flex;
+ justify-content:flex-end;
+ align-items:center;
+}
 
 .colorBox{
 background-color:#C0C0C0;
@@ -77,11 +88,17 @@ background-color:#C0C0C0;
 
  border-radius: 15px;
  margin-left:10px;
- margin-top:20px; 
+ margin-top:30px; 
 display:flex;
- justify-content:center;
+ justify-content:flex-end;
 }
 
+.instanceModal{
+
+margin-left:10px;
+background-color:silver;
+
+}
 .extratool{
 
 display:flex;
@@ -126,6 +143,16 @@ width:460px;
 height:460px;
 }
 
+#horizontal{
+display:flex;
+}
+
+#instanceview{
+margin:10px;
+margin-top:30px;
+margin-left:10px;
+}
+
 body {
   padding: 1px;
   font-family: sans-serif;
@@ -164,7 +191,14 @@ margin:3px;
 display:flex;
 justify-content:center;
 border:3px solid #CCC;
-width:130px;
+width:150px;
+}
+
+#rowArrangement{
+display:flex;
+flex-direction:row;
+justify-content:center;
+align-items:center;
 }
 
 #labelColor{

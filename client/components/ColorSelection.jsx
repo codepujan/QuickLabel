@@ -10,6 +10,9 @@ import Image from 'react-image-resizer';
 
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
 
+import Palx from 'palx';
+
+
 import { connect } from 'react-redux';
 const NAVIGATE_SETTINGS="NAVIGATE_SETTINGS";
 
@@ -27,17 +30,45 @@ gotocolorSettings:()=>dispatch(push(`${path_prefix}/settings`))
 
 const path_prefix = '/quicklabel';
 
+
+
+
+function DrawInstanceColors(props){
+if(props.instanceViewActive){
+return(
+<div className="instanceModal"> 
+<div id="instanceview">
+{props.currentParentColor}
+<div className="instanceBox">
+ <ul>{props.instancelist}</ul>
+</div>
+</div>
+</div>
+);
+}else{
+return(
+<div>
+
+</div>
+);
+
+}
+}
+
 class ColorSelection extends React.Component{
 
 
 constructor(props){
 super(props);
 this.state={
-classLabels:[]
+classLabels:[],
+instanceViewActive:false,
+currentParentColor:''
 }
 this.createColorsList=this.createColorsList.bind(this);
 this.changeCurrentColor=this.changeCurrentColor.bind(this);
 this.downloadLabelSettings();
+this.createInstanceList=this.createInstanceList.bind(this);
 
 } 
 
@@ -59,21 +90,53 @@ this.props.colorAction(changeColor);
 
 }
 
+
+
+createInstanceList(item){
+
+return(
+<div style={{marginRight:4}}>
+<div id="pickColor">
+<div style={{backgroundColor:item,width:'150px',height:'50px'}} onClick={(event)=>this.changeCurrentColor(item)}></div>
+</div>
+</div>
+);
+}
+
+
 createColorsList(item){
 return(
-<div>
+<div style={{marginRight:4}}>
 {item.label}
 <br/>
-<div id="pickColor" onClick={(event)=>this.changeCurrentColor(item.hex)}>
-<div style={{backgroundColor:item.hex,width:'150px',height:'50px'}}></div>
+<div id="rowArrangement">
+<div id="pickColor">
+<div style={{backgroundColor:item.hex,width:'150px',height:'50px'}} onClick={(event)=>this.changeCurrentColor(item.hex)}></div>
+</div>
+<div style={{marginLeft:10}} onClick={(event)=>this.setState({instanceViewActive:true,currentParentColor:item.hex})}>
+<Image src={require('../../images/AddColor.png')}
+width={20}
+height={20}
+/>
+</div>
 </div>
 </div>
 );
 }
 
 render(){
+let instances=[];
 let mClassLabels=this.state.classLabels;
 let listColors=mClassLabels.map(this.createColorsList);
+if(this.state.instanceViewActive){
+let instanceColors=Palx(this.state.currentParentColor);
+instanceColors=instanceColors["gray"]
+console.log("Instance Colors ",instanceColors);
+
+instances=instanceColors.map(this.createInstanceList);
+}else{
+instances=[];
+}
 if(mClassLabels.length==0){
 return(
 <div style={{width:600,marginTop:30 ,flexDirection:'row'}}>
@@ -95,10 +158,12 @@ height={40}
 }else{
 
 return(
+<div id="horizontal">
 <div className="colorBox">
  <ul>{listColors}</ul>
 </div>
-
+<DrawInstanceColors instanceViewActive={this.state.instanceViewActive} currentParentColor={this.state.currentParentColor} instancelist={instances}/>
+</div>
 );
 
 }
