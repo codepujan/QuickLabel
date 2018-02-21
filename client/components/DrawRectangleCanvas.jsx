@@ -83,7 +83,11 @@ bry:Math.floor((this.startY+this.rectHeight)/this.scaleY),
 brx:Math.floor((this.startX+this.rectWidth)/this.scaleX),
 rgb:hexToRgb(this.props.currentColor)
 },this.props.socketId);
+
 this.assistanceView.currentActive=false;
+if(this.assistanceView.externalUpdateCanvas===undefined)
+return;
+
 this.assistanceView.externalUpdateCanvas();
 
 }

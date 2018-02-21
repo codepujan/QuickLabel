@@ -223,6 +223,10 @@ rgb:hexToRgb(this.props.currentColor)
 
 this.pencilPoints=[];
 this.assistanceView.pencilPoints=[]; //clearing the other side of the story also 
+
+if(this.assistanceView.externalUpdateCanvas===undefined)
+return;
+
 this.assistanceView.externalUpdateCanvas();
 
 }

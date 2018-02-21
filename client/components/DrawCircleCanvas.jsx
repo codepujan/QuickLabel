@@ -72,6 +72,10 @@ rgb:hexToRgb(this.props.currentColor)
 },this.props.socketId);
 
 this.assistanceView.currentActive=false;
+
+if(this.assistanceView.externalUpdateCanvas===undefined)
+return;
+
 this.assistanceView.externalUpdateCanvas();
 
 
