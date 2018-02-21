@@ -147,13 +147,20 @@ return(
 <OriginalAssister myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} history={rootContext.props.history}/>
 
 <div style={{flexDirection:'column'}}>
-        <div style={{height:60}} onClick={(event)=>rootContext.callChildServer()}>
+        <div style={{height:60}} onClick={(event)=>{
+console.log("Also Setting Active COlor ",rootContext.state.currentColor);
+
+rootContext.setState({activeColor:rootContext.state.currentColor},()=>{
+rootContext.callChildServer()
+});
+}
+}>
 
         Current Class :
         <br/>
         <DrawCurrentSelection color={rootContext.state.currentColor}/>
         </div>
-       <DrawColorSelection style={{marginLeft:20}} colorAction={rootContext.props.changeColor} currentDatabase={rootContext.props.imagesets.current}/>
+       <DrawColorSelection style={{marginLeft:20}} colorAction={rootContext.props.changeColor} currentDatabase={rootContext.props.imagesets.current} activeColor={rootContext.state.activeColor}/>
 </div>
         </div>
 <div onClick={
@@ -337,7 +344,7 @@ function DrawColorSelection(props){
 return(
 <div>
 
-<ColorSelection colorAction={props.colorAction} currentDatabase={props.currentDatabase}/>
+<ColorSelection colorAction={props.colorAction} currentDatabase={props.currentDatabase} activeColor={props.activeColor}/>
 
 </div>
 );
@@ -426,7 +433,8 @@ if(this.state===undefined){
 	currentImageWidth:348, //full canvas width and height 
 	currentImageHeight:288,
 	childref:{},
-	childrefset:"set"
+	childrefset:"set",
+	activeColor:''
        }
 }
 this.childComp={};
