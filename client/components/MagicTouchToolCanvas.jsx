@@ -60,8 +60,11 @@ componentWillReceiveProps(nextProps) {
 console.log("Next Props",nextProps);
 this.activeHistory=nextProps.opState.activeboundaryIndex;
 console.log("Active History index is ",this.activeHistory);
+this.boundaries=nextProps.opState.boundary;
+this.activeboundaryIndex=nextProps.opState.activeboundaryIndex;
 
 this.updateCanvas(nextProps.opState.active.data,nextProps.opState.width,nextProps.opState.height,nextProps.opState.boundary,nextProps.opState.activeboundaryIndex);
+
 }
 
 updateCanvas(imgData,width,height,boundaries,activeHistory){
@@ -93,12 +96,13 @@ this.image={};
 this.scaleX=props.cWidth/props.imgWidth;
 this.scaleY=props.cHeight/props.imgHeight;
 this.activeHistory=this.props.opState.activeboundaryIndex;
-
+this.activePointCount=0;
 this.state=({imgData:props.opState.active.data,width:props.cWidth,height:props.cHeight,boundary:props.opState.boundary,imgWidth:props.imgWidth,imgHeight:props.imgHeight});
 
 this.undoSelection=this.undoSelection.bind(this);
 this.redoSelection=this.redoSelection.bind(this);
-
+this.activeboundaryIndex=0;
+this.boundaries=[];
 }
 
 
@@ -119,13 +123,16 @@ console.log("Adding");
 console.log("TouchX",this.magicX);
 console.log("TouchY",this.magicY);
 this.askForBoundary(this.magicY,this.magicX);
-
+this.activePointCount=this.activePointCount+1;
 this.magicPoints.push({x:Math.floor(this.magicX/this.scaleX),y:Math.floor(this.magicY/this.scaleY)});
+
 }
 
 
 callMyServer(){
 
+
+//TODO : Not only magic points : only selected magic points 
 this.props.opAction('MagicTouch',{
 points:this.magicPoints,
 rgb:hexToRgb(this.props.currentColor)
@@ -145,11 +152,25 @@ undoSelection(){
 console.log("Undoing Selection ");
 
 this.props.undoSelection();
+console.log("Erasing Magic Touch of Index",this.activePointCount);
+
+this.activePointCount=this.activePointCount-1;
+this.magicPoints.splice(this.activePointCount,1);
+
 }
 
 
 redoSelection(){
+console.log("Interested index is ",this.activeboundaryIndex+1);
+
+console.log("Boundaries Available is ",this.boundaries);
+
+let testPoint=this.boundaries[this.activeboundaryIndex];
+console.log("Test Point is ",testPoint[10]);
+this.magicPoints.push({x:testPoint[10].x,y:testPoint[10].y});
+
 this.props.redoSelection();
+
 }
 
   render() {
