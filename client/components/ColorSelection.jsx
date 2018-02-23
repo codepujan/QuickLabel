@@ -10,8 +10,7 @@ import Image from 'react-image-resizer';
 
 import { ConnectedRouter, routerReducer, routerMiddleware, push } from 'react-router-redux'
 
-import Palx from 'palx';
-
+import Values from 'values.js';
 
 import { connect } from 'react-redux';
 const NAVIGATE_SETTINGS="NAVIGATE_SETTINGS";
@@ -75,7 +74,6 @@ return(
 class ColorSelection extends React.Component{
 
 componentWillReceiveProps(nextProps){
-console.log("New Set of Props Recieved ",nextProps);
 
 if(nextProps.activeColor!='')
 {
@@ -86,10 +84,16 @@ console.log("Changing State of this new color ",nextProps.activeColor);
 let currentState=this.state.instanceSelected;
 currentState[nextProps.activeColor]=true;
 this.setState({instanceSelected:currentState},()=>{
-console.log("Instance selected ",this.state.instanceSelected);
 });
 
+}else{
+//just the instanceList Set , of before 
+console.log("Instance List ",nextProps.instanceList);
+this.setState({instanceSelected:nextProps.instanceList});
+
+
 }
+
 
 
 }
@@ -97,12 +101,19 @@ console.log("Instance selected ",this.state.instanceSelected);
 
 constructor(props){
 super(props);
+let prefilled={};
+
+for(let i=0;i<props.instanceList.length;i++)
+prefilled[props.instanceList[i]]=true
+
+console.log("Prefiiled ",prefilled);
+
 this.state={
 classLabels:[],
 instanceViewActive:false,
 currentParentColor:'',
 currentParent:'',
-instanceSelected:[]
+instanceSelected:prefilled
 }
 this.createColorsList=this.createColorsList.bind(this);
 this.changeCurrentColor=this.changeCurrentColor.bind(this);
@@ -111,6 +122,8 @@ this.createInstanceList=this.createInstanceList.bind(this);
 this.closeInstanceMenu=this.closeInstanceMenu.bind(this);
 this.curateInstanceList=this.curateInstanceList.bind(this);
 this.getTickedIcon=this.getTickedIcon.bind(this);
+console.log("Pre Filled Instance List ",props.instanceList);
+
 } 
 
 
@@ -164,7 +177,6 @@ return(<div></div>);
 }
 
 createInstanceList(item){
-
 return(
 <div id="horizontal"style={{}}>
 {this.getTickedIcon(item.selected)}
@@ -200,10 +212,15 @@ height={20}
 
 curateInstanceList(instanceColors){
 
+console.log("Curating List ");
 let curatedList=[]
+console.log("Instance Selected ",this.state.instanceSelected);
+
+
+console.log("Comparing with ",this.state.instanceSelected);
+
 for(var i=0;i<instanceColors.length;i++){
-//Todo : Selected Status Left
-let hex=instanceColors[i];
+let hex="#"+instanceColors[i].hex;
 curatedList.push({count:i+1,hex:hex,selected:this.state.instanceSelected[hex]==true?true:false});
 }
 console.log("Curated list ",curatedList);
@@ -218,9 +235,8 @@ let mClassLabels=this.state.classLabels;
 let listColors=mClassLabels.map(this.createColorsList);
 if(this.state.instanceViewActive){
 //For now ; only getting the gray color : because I am not sure how this thing actually works or even works :( 
-let instanceColors=Palx(this.state.currentParentColor);
-instanceColors=instanceColors["gray"]
-//console.log("Instance Colors ",instanceColors);
+let instanceColors=new Values(this.state.currentParentColor).tints(10);
+instanceColors=instanceColors;
 instanceColors=this.curateInstanceList(instanceColors);
 instances=instanceColors.map(this.createInstanceList);
 }

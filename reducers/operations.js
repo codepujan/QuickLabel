@@ -1,4 +1,4 @@
-let initialState={image:{},boundary:[],currentImageId:'',original:{},width:0,height:0,active:{},segmented:true,notes:'',activeboundaryIndex:0};
+let initialState={image:{},boundary:[],currentImageId:'',original:{},width:0,height:0,active:{},segmented:true,notes:'',activeboundaryIndex:0,instanceColors:[]};
 const INCREASE_HISTORY_INDEX='INCREASE_HISTORY_INDEX';
 const DECREASE_HISTORY_INDEX='DECREASE_HISTORY_INDEX';
 
@@ -7,7 +7,7 @@ console.log("Answer Type",action.type);
 console.log("New Reply I got ",action.payload);
   switch (action.type) {
   case 'REPLY':{
-  return Object.assign({},state,{image:action.payload,boundary:[],original:action.payload.orgi,width:action.payload.width,height:action.payload.height,active:action.payload.data,notes:action.payload.note});
+  return Object.assign({},state,{image:action.payload,boundary:[],original:action.payload.orgi,width:action.payload.width,height:action.payload.height,active:action.payload.data,notes:action.payload.note,instanceColors:action.payload.instanceColors});
 }
 
 case INCREASE_HISTORY_INDEX:{

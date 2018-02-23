@@ -28,6 +28,7 @@ import CheckCircle from 'material-ui/svg-icons/action/check-circle';
 
 import Save from 'material-ui/svg-icons/action/store';
 
+import axios from 'axios';
 
 import Reset from 'material-ui/svg-icons/navigation/refresh';
 
@@ -47,6 +48,9 @@ const DECREASE_HISTORY_INDEX='DECREASE_HISTORY_INDEX';
 let CHANGE_COLOR="COLOR_CHANGE";
 
 const path_prefix = '/quicklabel';
+
+
+const addInstanceColorURL="https://eskns.com/addInstancecolor/";
 
 
 
@@ -152,6 +156,8 @@ console.log("Also Setting Active COlor ",rootContext.state.currentColor);
 
 rootContext.setState({activeColor:rootContext.state.currentColor},()=>{
 rootContext.callChildServer()
+rootContext.addInstanceColor(rootContext.state.currentColor);
+
 });
 }
 }>
@@ -160,7 +166,7 @@ rootContext.callChildServer()
         <br/>
         <DrawCurrentSelection color={rootContext.state.currentColor}/>
         </div>
-       <DrawColorSelection style={{marginLeft:20}} colorAction={rootContext.props.changeColor} currentDatabase={rootContext.props.imagesets.current} activeColor={rootContext.state.activeColor}/>
+       <DrawColorSelection style={{marginLeft:20}} colorAction={rootContext.props.changeColor} currentDatabase={rootContext.props.imagesets.current} activeColor={rootContext.state.activeColor} instanceList={rootContext.props.operations.instanceColors}/>
 </div>
         </div>
 <div onClick={
@@ -344,7 +350,7 @@ function DrawColorSelection(props){
 return(
 <div>
 
-<ColorSelection colorAction={props.colorAction} currentDatabase={props.currentDatabase} activeColor={props.activeColor}/>
+<ColorSelection colorAction={props.colorAction} currentDatabase={props.currentDatabase} activeColor={props.activeColor} instanceList={props.instanceList}/>
 
 </div>
 );
@@ -441,8 +447,8 @@ this.childComp={};
 this.handleStateChange=this.handleStateChange.bind(this);
 this.callChildServer=this.callChildServer.bind(this);
 console.log("Before Loading Check",this.props.imagesets.current);
-this.callSaveCompletedImage=this.callSaveCompletedImage.bind(this);
-
+this.addInstanceColor=this.addInstanceColor.bind(this);
+this.instancecolors=[];
 
 console.log("Sending Socket Id ",this.props.communication.communicationId);
 
@@ -472,12 +478,34 @@ this.childComp.callMyServer();
 
 }
 
-callSaveCompletedImage(){
+addInstanceColor(newhex){
 
+for(let i=0;i<this.instancecolors.length;i++){
+if(this.instancecolors[i]==newhex)
+return;
+}
+//else new addition , add hex 
+//Post Request 
+axios.post(addInstanceColorURL,
+{
+hex:newhex,
+userid:this.props.userinfo.userid,
+dataset:this.props.imagesets.current,
+imageid:this.props.operations.currentImageId
+}
+).then((response)=>{
 
+console.log("Request Resposne is ",response);
 
+}).catch((error) => {
+      console.log("Error Alert ",error)
+      console.log(error.body);
+          throw(error)
+      })
 
 }
+
+
 handleStateChange(impact){
 
 this.setState({currentSelection:impact});
