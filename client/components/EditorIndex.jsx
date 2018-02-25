@@ -156,7 +156,6 @@ console.log("Also Setting Active COlor ",rootContext.state.currentColor);
 
 rootContext.setState({activeColor:rootContext.state.currentColor},()=>{
 rootContext.callChildServer()
-rootContext.addInstanceColor(rootContext.state.currentColor);
 
 });
 }
@@ -473,8 +472,14 @@ else
 
 callChildServer(){
 
+if(this.childComp.callMyServer===undefined)
+console.log("Cannot Call Child Server without any Child Component active ");
+else
+{
 this.childComp.callMyServer();
+this.addInstanceColor(this.state.currentColor);
 
+}
 
 }
 
