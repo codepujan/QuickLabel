@@ -104,26 +104,27 @@ let applyColor=props.activeColor;
 let socketId=props.socketId;
 let mThis=props.context;
 let historyState=props.history;
+let counterAction=props.counterAdder;
 
 if(props.myState=="freeform")
 {
 return(<div className="theater"> <FreeFormAssistanceCanvas opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
-imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref}
+imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref} counterAction={counterAction}
 /> </div>);
 }else if(props.myState=="rectangle")
 {
 return(<div className="theater"> <RectangleAssistanceCanvas opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
-imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref}
+imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref} counterAction={counterAction}
 /> </div>);
 }else if(props.myState=="circle")
 {
 return(<div className="theater"> <CircleAssistance opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
-imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref}
+imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref} counterAction={counterAction}
 /> </div>);
 }else if(props.myState=="magictouch")
 {
 return(<div className="theater"> <PlainAssistView opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
-imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref} history={historyState}
+imgWidth={operationState.width} imgHeight={operationState.height} socketId={socketId} orgicanvas={mThis.state.childref} history={historyState} counterAction={counterAction}
 /> </div>);
 
 
@@ -146,9 +147,9 @@ return(
      <DrawToolbar context={rootContext}/>
         </div>
 <div id="stage">
-        <DrawingComponent myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} userinfo={rootContext.props.userinfo} imagesets={rootContext.props.imagesets} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} history={rootContext.props.history} undoSelection={rootContext.props.undoSelection} redoSelection={rootContext.props.redoSelection}/>
+        <DrawingComponent myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} userinfo={rootContext.props.userinfo} imagesets={rootContext.props.imagesets} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} history={rootContext.props.history} undoSelection={rootContext.props.undoSelection} redoSelection={rootContext.props.redoSelection} counterAdder={rootContext.increaseClickCount}/>
 
-<OriginalAssister myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} history={rootContext.props.history}/>
+<OriginalAssister myState={rootContext.state.currentSelection}  operationState={rootContext.props.operations}  operationAction={rootContext.props.operate}  context={rootContext} spinnerAction={rootContext.props.startLoading} activeColor={rootContext.props.colors} socketId={rootContext.props.communication.communicationId} history={rootContext.props.history} counterAdder={rootContext.increaseClickCount}/>
 
 <div style={{flexDirection:'column'}}>
         <div style={{height:60}} onClick={(event)=>{
@@ -256,6 +257,7 @@ let historyState=props.history;
 let mThis=props.context;
 let undoAction=props.undoSelection;
 let redoAction=props.redoSelection;
+let counterAction=props.counterAdder;
 
 
 if(currentSelection=='rectangle')
@@ -271,7 +273,7 @@ else{
 console.log("No need to Set State any more ");
 }
 }}
- opState={operationState} opAction={operationAction} cWidth={450} cHeight={450}  imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}currentColor={applyColor} socketId={socketId}/></div>);
+ opState={operationState} opAction={operationAction} cWidth={450} cHeight={450}  imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}currentColor={applyColor} socketId={socketId} counterAction={counterAction}/></div>);
 else if (currentSelection=='circle')
         currentActiveChild=(<div className="theater"> 
 <DrawCircleCanvas ref={(node)=>{
@@ -284,7 +286,7 @@ mThis.setState({childref:node,childrefset:"circle"});
 else{
 console.log("No need to Set State any more ");
 }
-}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor} imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}/></div>);
+}} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor} imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId} counterAction={counterAction}/></div>);
 else if (currentSelection=='freeform')
         currentActiveChild=(<div className="theater"> 
 <DrawFreeFormCanvas ref={(node)=>{
@@ -300,8 +302,7 @@ console.log("No need to Set State any more ");
 
 }}
  opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
-imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId}
-/> </div>);
+imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId} counterAction={counterAction}/> </div>);
 else if (currentSelection=='magictouch')
 	currentActiveChild=(<div className="theater"> 
 <MagicTouchToolCanvas ref={(node)=>{
@@ -316,14 +317,12 @@ console.log("No need to Set State any more ");
 }
 
 }} opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} currentColor={applyColor}
-imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId} history={historyState} undoSelection={undoAction} redoSelection={redoAction}
-/> </div>);
+imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height} socketId={socketId} history={historyState} undoSelection={undoAction} redoSelection={redoAction} counterAction={counterAction}/> </div>);
 else   
  currentActiveChild=(<div className="theater"> 
 <NormalCanvas  opState={operationState} opAction={operationAction} cWidth={450} cHeight={450} spinnerStart={loadSpinnerAction}
 imgWidth={mThis.props.operations.width} imgHeight={mThis.props.operations.height}
-imagesets={imagesets} userinfo={userinfo}
-/>
+imagesets={imagesets} userinfo={userinfo} counterAction={counterAction}/>
 </div>
 )
 
@@ -441,6 +440,7 @@ if(this.state===undefined){
 	childrefset:"set",
 	activeColor:''
        }
+
 }
 this.childComp={};
 this.handleStateChange=this.handleStateChange.bind(this);
@@ -448,11 +448,12 @@ this.callChildServer=this.callChildServer.bind(this);
 console.log("Before Loading Check",this.props.imagesets.current);
 this.addInstanceColor=this.addInstanceColor.bind(this);
 this.instancecolors=[];
+this.increaseClickCount=this.increaseClickCount.bind(this);
+this.startTimer=this.startTimer.bind(this);
+this.stopTimer=this.stopTimer.bind(this);
 
-console.log("Sending Socket Id ",this.props.communication.communicationId);
-
-
-console.log("Highermost Component Constructor Called ");
+this.clickCount=0;
+this.startTime={}
 
 
 console.log(this.props.operations.image);
@@ -468,6 +469,25 @@ else
 {
 //Tryna do what mavericks do 
 }
+}
+
+
+increaseClickCount(){
+this.clickCount=this.clickCount+1;
+console.log("Click Count is ",this.clickCount);
+
+}
+
+
+startTimer(){
+console.log("Timer Started ");
+this.startTime=new Date();
+}
+
+stopTimer(){
+
+console.log("Stop Timer and dump to a file somewhere ");
+
 }
 
 callChildServer(){

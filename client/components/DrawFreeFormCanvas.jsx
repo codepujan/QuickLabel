@@ -292,11 +292,15 @@ var parentOffset = canvas.getBoundingClientRect();
 this.currX = (e.clientX - parentOffset.left);
 this.currY = (e.clientY - parentOffset.top);
 this.flag=true;
+this.props.counterAction();
+
 }
 
 
 handleMouseUp(e){
 this.flag=false;
+this.props.counterAction();
+
 }
 
 

@@ -121,7 +121,6 @@ ctx.drawImage(image,0,0,Math.floor(width*root.scaleX),Math.floor(height*root.sca
 
 handleMouseDown(e){
 
-console.log("Mouse Down");
 
 const canvas=this.refs.canvas;
  var parentOffset = canvas.getBoundingClientRect();
@@ -130,6 +129,8 @@ const canvas=this.refs.canvas;
 
 this.isDown=true;
 this.currentActive=true;
+this.props.counterAction();
+
 }
 
 
@@ -155,6 +156,8 @@ this.handleMouseMove(touch);
 handleMouseUp(e){
 
 this.isDown=false;
+this.props.counterAction();
+
 }
 
 

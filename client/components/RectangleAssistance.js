@@ -101,6 +101,8 @@ const canvas=this.refs.canvas;
 this.isDown=true;
 this.currentActive=true;
 this.orgicanvas.recieveMouseDown(this.startX,this.startY);
+this.props.counterAction();
+
 }
 
 
@@ -127,6 +129,7 @@ handleMouseUp(e){
 
 this.isDown=false;
 this.orgicanvas.recieveMouseUp();
+this.props.counterAction();
 
 }
 

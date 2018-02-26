@@ -114,6 +114,7 @@ this.nStartY = (e.clientY-parentOffset.top)/1;
   this.radius = 0;
 this.currentActive=true;
 this.orgicanvas.recieveMouseDown(this.nStartX,this.nStartY);
+this.props.counterAction();
 
 }
 
@@ -156,6 +157,7 @@ handleMouseUp(e){
 
  this.isDrawing=false;
 this.orgicanvas.recieveMouseUp();
+this.props.counterAction();
 
 }
 

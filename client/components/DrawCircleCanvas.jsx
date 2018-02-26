@@ -178,6 +178,8 @@ this.nStartY = (e.clientY-parentOffset.top)/1;
   this.isDrawing = true;
   this.radius = 0;
 this.currentActive=true;
+this.props.counterAction();
+
 }
 
 handleMouseMove(e){
@@ -217,6 +219,7 @@ ctx.beginPath();
 handleMouseUp(e){
 
  this.isDrawing=false;
+ this.props.counterAction();
 
 }
 

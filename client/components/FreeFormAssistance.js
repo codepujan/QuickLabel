@@ -254,11 +254,15 @@ this.currX = (e.clientX - parentOffset.left);
 this.currY = (e.clientY - parentOffset.top);
 this.flag=true;
 this.orgicanvas.markActive();
+this.props.counterAction();
+
 }
 
 
 handleMouseUp(e){
 this.flag=false;
+this.props.counterAction();
+
 }
 
 

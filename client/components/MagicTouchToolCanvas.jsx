@@ -126,6 +126,8 @@ this.askForBoundary(this.magicY,this.magicX);
 this.activePointCount=this.activePointCount+1;
 this.magicPoints.push({x:Math.floor(this.magicX/this.scaleX),y:Math.floor(this.magicY/this.scaleY)});
 
+this.props.counterAction();
+
 }
 
 
