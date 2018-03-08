@@ -103,8 +103,14 @@ constructor(props){
 super(props);
 let prefilled={};
 
-for(let i=0;i<props.instanceList.length;i++)
-prefilled[props.instanceList[i]]=true
+console.log(props.instanceList);
+
+//if(typeof props.instanceList==="undefined")
+//prefilled=[];
+//else{
+//for(let i=0;i<props.instanceList.length;i++)
+//prefilled[props.instanceList[i]]=true
+//}
 
 console.log("Prefiiled ",prefilled);
 

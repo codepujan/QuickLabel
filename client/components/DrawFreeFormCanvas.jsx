@@ -366,7 +366,7 @@ for(var i=0;i<this.pencilPoints.length;i++){
   ctx.beginPath();
 // ctx.lineWidth=this.pencilWidth;
 ctx.fillStyle = this.pencilColor;
-ctx.arc(this.pencilPoints[i].x,this.pencilPoints[i].y,this.pencilWidth, 0, 2 * Math.PI, false);
+ctx.arc(this.pencilPoints[i].x,this.pencilPoints[i].y,this.pencilWidth, 0,Math.PI*2, true);
 ctx.fill();
 }
 
