@@ -69,9 +69,7 @@ class ShowDataSetImage extends React.Component{
 constructor(props,context){
 
 super(props,context);
-this.addItem=this.addItem.bind(this);
 
-this.createTasks = this.createTasks.bind(this);
 this.requestImages=this.requestImages.bind(this);
 this.state={
 currentPage:0,
@@ -158,29 +156,16 @@ throw(error);
 }
 
 
- createTasks(item) {
-
-     return(<li key={item.key}>
-
-<Image src={item.data} 
-width={100}
-height={100}
-/>
-{item.text}
-</li>);
-}
-
-addItem(e){
 
 
-}
-
-
-createImages(item){
+createCompletedImages(item){
 console.log(item);
 if(item.imageId==this.lastActive){
 this.lastbase64=item.data;
 }
+
+if(item.completed==0)
+return;
 
 return(
 <div id="thumbnailDataSetImage">
@@ -207,20 +192,58 @@ height={40}
 
 }
 
+createIncompleteImages(item){
+console.log(item);
+if(item.imageId==this.lastActive){
+this.lastbase64=item.data;
+}
+if(item.completed==1)
+return;
+
+return(
+<div id="thumbnailDataSetImage">
+
+<div onClick={()=>{this.navigateImage(item.imageId)}}>
+<Image src={"data:image/png;base64,"+item.data}
+width={400}
+height={200}
+>
+
+</Image>
+
+</div>
+<div style={{marginTop:10}} onClick={()=>{this.downloadSingleImage(item.imageId)}}>
+
+<ScaledImage src={require('../../images/Download.png')}
+width={40}
+height={40}
+/>
+</div>
+
+</div>
+);
+
+
+
+
+}
+
  render() {
 console.log("Loading",this.props.imagesets.loading);
 
 if(!this.props.imagesets.loading){
 let imageEntries=this.props.imagesets.data;
 
-let imageItems=imageEntries.map(this.createImages,this);
+let completedItems=imageEntries.map(this.createCompletedImages,this);
+
+let incompleteItems=imageEntries.map(this.createIncompleteImages,this);
 
 return (
 
 <div>
 
 <div>
-<div style={{fontSize:'16',color:'blue'}}>
+<div style={{fontSize:18,color:'blue',fontWeight:'bold'}}>
 Previously Working Image : </div>
 <br/>
 <div id="lastWorkingImage">
@@ -235,22 +258,24 @@ height={200}
 </div>
 
 </div>
-
-
-
-
-
-
-
 </div>
 
-
-
+<div style={{fontSize:18,color:'blue',fontWeight:'bold'}}>
+Incomplete  Images : </div>
+<br/>
  <StackGrid id="hzgrid" columnWidth={400}
-      >	{imageItems};
+      >	{completedItems};
 </StackGrid>
 
 
+<br/>
+
+<div style={{fontSize:18,color:'blue',fontWeight:'bold'}}>
+Completed Images : </div>
+<br/>
+<StackGrid id="hzgrid" columnWidth={400}
+      > {incompleteItems};
+</StackGrid>
 
 <div onClick={()=>{
 this.props.navigateNew();
@@ -264,16 +289,11 @@ this.props.navigateCreateNew();
     );
 
 }else{
-
-
 console.log("Loading Bruhhh!!! ");
-
 return (<div class='loader'>
         <HashLoader size={200} color={'#123abc'}
         loading={true}/>
         </div>);
-
-
 }
 
 }
