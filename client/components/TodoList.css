@@ -253,6 +253,20 @@ flex-direction:column;
     box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
 }
 
+#lastWorkingImage{
+display:inline-block;
+box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+margin:3px;
+width:420;
+height:220;
+justify-content:center;
+border:3px solid #CCC;
+}
+
+#lastWorkingImage:active{
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
+}
+
 button{
 z-index:2;
 position:fixed;

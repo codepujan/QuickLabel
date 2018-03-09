@@ -28,6 +28,7 @@ const path_prefix = '/quicklabel';
 import axios from 'axios';
 
 const downloadSingleURL="https://eskns.com/downloadSingleImage/";
+const getUserMeta="https://eskns.com/getMetaData/";
  
 import { connect } from 'react-redux'
 const IMAGESET_REQUEST_BY_DATASET="IMAGESET_REQUEST_BY_DATASET";
@@ -76,13 +77,15 @@ this.state={
 currentPage:0,
 offset:0,
 requestSize:5,
-imageBuffers:[]
+imageBuffers:[],
 }
 this.props.freshenUpState();
 this.requestImages();
 this.navigateImage=this.navigateImage.bind(this);
 this.downloadSingleImage=this.downloadSingleImage.bind(this);
-
+this.requestLastWorkingImage=this.requestLastWorkingImage.bind(this);
+this.lastActive='';
+this.lastbase64='';
 }
 
 
@@ -101,9 +104,6 @@ imageId:imageid
 console.log(response.data);
 
 let blob=b64toBlob(response.data,contentType);
-//let blobURL=URL.createObjectURL(blob);
-//window.location=blobURL;
-//let  file=new Blob(response.data,{type:"image/jpg"});
 FileSaver.saveAs(blob,"firstDownload.jpg");
 }).catch((error)=>{
 console.log("Error Alert ",error);
@@ -132,9 +132,34 @@ console.log("Dataset Name ",this.props.imagesets.current);
 
 this.props.downloadInitial(this.props.userinfo.userid,this.props.imagesets.current,this.props.userinfo.clientid.clientId);
 
+this.requestLastWorkingImage();
+
 }
 
+requestLastWorkingImage(){
+
+console.log("Requesting Last Working Image ");
+
+axios.post(getUserMeta,
+{
+userid:this.props.userinfo.userid,
+}).then((response)=>{
+console.log("Meta - Data ",response.data);
+this.lastActive=response.data.lastactiveimage;
+
+}).catch((error)=>{
+console.log("Meta Data Error Alert ",error);
+throw(error);
+
+});
+
+
+
+}
+
+
  createTasks(item) {
+
      return(<li key={item.key}>
 
 <Image src={item.data} 
@@ -153,6 +178,9 @@ addItem(e){
 
 createImages(item){
 console.log(item);
+if(item.imageId==this.lastActive){
+this.lastbase64=item.data;
+}
 
 return(
 <div id="thumbnailDataSetImage">
@@ -184,12 +212,40 @@ console.log("Loading",this.props.imagesets.loading);
 
 if(!this.props.imagesets.loading){
 let imageEntries=this.props.imagesets.data;
-//since loading has also been added to the reducer 
 
 let imageItems=imageEntries.map(this.createImages,this);
 
 return (
+
 <div>
+
+<div>
+<div style={{fontSize:'16',color:'blue'}}>
+Previously Working Image : </div>
+<br/>
+<div id="lastWorkingImage">
+<div onClick={()=>{this.navigateImage(item.lastActive)}}>
+<Image src={"data:image/png;base64,"+this.lastbase64}
+width={400}
+height={200}
+>
+
+</Image>
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
  <StackGrid id="hzgrid" columnWidth={400}
       >	{imageItems};
 </StackGrid>
