@@ -410,7 +410,26 @@ height={50}
 />
 </div>
 
+<div className="tool" onClick={(event)=>props.context.startTimer()}>
+<Image src={require('../../images/start.png')}
+width={50}
+height={50}
+/>
+</div>
 
+<div className="tool" onClick={(event)=>props.context.stopTimer()}>
+<Image src={require('../../images/stop.png')}
+width={50}
+height={50}
+/>
+</div>
+
+<div className="tool" onClick={(event)=>props.context.exportStats()}>
+<Image src={require('../../images/exportstat.png')}
+width={50}
+height={50}
+/>
+</div>
 
 
 </div>
@@ -452,9 +471,11 @@ this.increaseClickCount=this.increaseClickCount.bind(this);
 this.startTimer=this.startTimer.bind(this);
 this.stopTimer=this.stopTimer.bind(this);
 
+this.exportStats=this.exportStats.bind(this);
+
 this.clickCount=0;
 this.startTime={}
-
+this.duration={}
 
 console.log(this.props.operations.image);
 
@@ -486,10 +507,20 @@ this.startTime=new Date();
 
 stopTimer(){
 
-console.log("Stop Timer and dump to a file somewhere ");
+let endTime=new Date();
+let diff=endTime-this.startTime;
+
+this.duration=diff / 1000;
+
+//console.log("Recorded Duration ",elapsed);
 
 }
 
+exportStats(){
+console.log("Duration for the Operation is ",this.duration);
+console.log("Clicks taken for the Operation is ",this.clickCount);
+
+}
 callChildServer(){
 
 if(this.childComp.callMyServer===undefined)
