@@ -247,7 +247,7 @@ return (
 Previously Working Image : </div>
 <br/>
 <div id="lastWorkingImage">
-<div onClick={()=>{this.navigateImage(item.lastActive)}}>
+<div onClick={()=>{this.navigateImage(this.lastActive)}}>
 <Image src={"data:image/png;base64,"+this.lastbase64}
 width={400}
 height={200}
@@ -261,7 +261,7 @@ height={200}
 </div>
 
 <div style={{fontSize:18,color:'blue',fontWeight:'bold'}}>
-Incomplete  Images : </div>
+Completed  Images : </div>
 <br/>
  <StackGrid id="hzgrid" columnWidth={400}
       >	{completedItems};
@@ -271,7 +271,7 @@ Incomplete  Images : </div>
 <br/>
 
 <div style={{fontSize:18,color:'blue',fontWeight:'bold'}}>
-Completed Images : </div>
+InComplete Images : </div>
 <br/>
 <StackGrid id="hzgrid" columnWidth={400}
       > {incompleteItems};
