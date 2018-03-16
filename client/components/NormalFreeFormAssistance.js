@@ -58,12 +58,10 @@ function rgbToHex(r,g,b){
 return (function(h){
 	return new Array(7-h.length).join("0")+h
 	})(bin.toString(16).toUpperCase())
-
-
 }
 
 
-export default class DrawFreeFormCanvas extends React.Component {
+export default class SourceAssistanceCanvas extends React.Component {
 
 componentDidMount(){
 this.updateCanvas(this.imageData);
@@ -76,6 +74,7 @@ this.updateCanvas(this.state.imgData,this.state.width,this.state.height);
 }
 constructor(props){
 super(props);
+console.log("Orgi Canvas ",props.orgicanvas);
 this.handleMouseDown=this.handleMouseDown.bind(this);
 this.handleMouseUp=this.handleMouseUp.bind(this);
 this.handleMouseOut=this.handleMouseOut.bind(this);
@@ -83,7 +82,7 @@ this.handleMouseMove=this.handleMouseMove.bind(this);
 this.handleTouchStart=this.handleTouchStart.bind(this);
 this.handleTouchEnd=this.handleTouchEnd.bind(this);
 this.handleTouchMove=this.handleTouchMove.bind(this);
-this.raw=this.draw.bind(this);
+this.draw=this.draw.bind(this);
 this.updateCanvas=this.updateCanvas.bind(this);
 this.prevX = 0;
 this.currX = 0;
@@ -93,16 +92,15 @@ this.flag=false;
 this.x = "black",
 this.y = 2;
 this.pencilPoints=[];
-this.imageData=props.opState.active.data;
+this.imageData=props.opState.original.data;
 this.imgWidth=props.imgWidth;
 this.imgHeight=props.imgHeight;
 this.image={};
-this.callMyServer=this.callMyServer.bind(this);
 this.eraserMode=false;
 this.eraserWidth=5;
 this.eraserHeight=5;
 this.pencilColor="green";
-this.pencilWidth=5;
+this.pencilWidth=3;
 this.currentActive=false;
 this.contextScale=1;
 this.baseX=0;
@@ -114,45 +112,13 @@ this.handlePinch=this.handlePinch.bind(this);
 this.handlePan=this.handlePan.bind(this);
 this.handlePinchEnd=this.handlePinchEnd.bind(this);
 this.handlePanEnd=this.handlePanEnd.bind(this);
-this.recievePoints=this.recievePoints.bind(this);
 this.canvasNode={};
 this.setchildCanvas=this.setchildCanvas.bind(this);
 this.scaleX=props.cWidth/props.imgWidth;
 this.scaleY=props.cHeight/props.imgHeight;
-this.assistanceView={};//View for the assistance ( Original Image ) 
+this.orgicanvas=props.orgicanvas;
+this.state=({imgData:props.opState.original.data,width:props.imgWidth,height:props.imgHeight,zoomMode:false});
 
-//Added for Straight Line 
-this.shiftActive=false;
-this.finalPos={};
-this.startPos={};
-this.shiftPending=false;
-
-this.state=({imgData:props.opState.active.data,width:props.imgWidth,height:props.imgHeight,zoomMode:false});
-
-this.onKeyDown=this.onKeyDown.bind(this);
-this.onKeyUp=this.onKeyUp.bind(this);
-}
-
-
-componentWillMount(){
-document.addEventListener("keydown",this.onKeyDown);
-document.addEventListener("keyup",this.onKeyUp);
-}
-
-onKeyDown(e){
-if(e.keyCode==16)
-{
-this.shiftActive=true;
-console.log("Shift Active ");
-}
-}
-
-onKeyUp(e){
-if(e.keyCode==16)
-{
-this.shiftActive=false;
-console.log("Shift Not Active ");
-}
 
 }
 
@@ -218,50 +184,7 @@ this.adjustDeltaY=this.baseY;
 }
 
 
-recievePoints(message,orgiref){
-const ctx=this.canvasNode.getContext('2d');
 
-this.pencilPoints=message;
-this.draw(ctx);
-this.assistanceView=orgiref;
-}
-
-markActive(){
-this.currentActive=true;
-}
-markInactive(){
-this.currentActive=false;
-
-}
-
-callMyServer(){
-
-console.log("Calling Server Broo");
-
-//console.log(this.pencilPoints);
-
-this.currentActive=false;
-
-for(let i=0;i<this.pencilPoints.length;i++){
-this.pencilPoints[i].x=Math.floor(((this.pencilPoints[i].x-this.baseX)/this.scaleX)/this.contextScale);
-this.pencilPoints[i].y=Math.floor(((this.pencilPoints[i].y-this.baseY)/this.scaleY)/this.contextScale);
-}
-
-this.props.opAction('FreeForm',{
-points:this.pencilPoints,
-rgb:hexToRgb(this.props.currentColor.color),
-label:this.props.currentColor.label
-},this.props.socketId);
-
-this.pencilPoints=[];
-this.assistanceView.pencilPoints=[]; //clearing the other side of the story also 
-
-if(this.assistanceView.externalUpdateCanvas===undefined)
-return;
-
-this.assistanceView.externalUpdateCanvas();
-
-}
 
 
 activateEraserMode(){
@@ -275,14 +198,20 @@ console.log("Deactivating Eraser");
 this.eraserMode=false;
 
 }
+externalUpdateCanvas(){
+this.updateCanvas(this.state.imgData,this.state.width,this.state.height);
+}
 
 componentWillReceiveProps(nextProps) {
+console.log("Meanshift Canvas on other side ",nextProps.orgicanvas);
+this.orgicanvas=nextProps.orgicanvas;
+
 if(this.currentActive)
 return;
 else
 {
 this.deactivateEraserMode();
-this.updateCanvas(nextProps.opState.active.data,nextProps.opState.width,nextProps.opState.height);
+this.updateCanvas(nextProps.opState.original.data,nextProps.opState.width,nextProps.opState.height);
 }
 
 }
@@ -317,75 +246,48 @@ ctx.drawImage(root.image,root.baseX,root.baseY,Math.floor(width*root.scaleX*root
 handleMouseDown(e){
 const canvas=this.canvasNode;
 this.currentActive=true;
-const ctx=this.canvasNode.getContext('2d');
+
 this.prevX = this.currX;
 this.prevY = this.currY;
 var parentOffset = canvas.getBoundingClientRect();
 this.currX = (e.clientX - parentOffset.left);
 this.currY = (e.clientY - parentOffset.top);
-
-if(this.shiftActive){
-this.startPos={x:this.currX,y:this.currY};
-}else{
-
-if(this.currX!=0 && this.currY!=0){
-this.pencilPoints.push({x:this.currX,y:this.currY,drag:false});
-this.draw(ctx);
-
-}
-
-}
-
 this.flag=true;
+this.orgicanvas.markActive();
 this.props.counterAction();
 
 }
 
 
 handleMouseUp(e){
-if(this.shiftActive){
-//Starting Point 
-this.pencilPoints.push({x:this.startPos.x,y:this.startPos.y,drag:true});   
-//Ending Point
-this.pencilPoints.push({x:this.finalPos.x,y:this.finalPos.y,drag:true});
-this.shiftActive=false;
-this.finalPos={x:0,y:0};
-this.startPos={x:0,y:0};
-}else{
 this.flag=false;
-}
 this.props.counterAction();
+
 }
 
 
 handleMouseOut(e){
 this.flag=false;
-this.props.counterAction();
 }
 
-
-
 handleMouseMove(e){
-//return when we are zooming or panning 
+
 
 if(this.state.zoomMode==true)
 return; 
 
+if (this.flag) {
+
+console.log(this.eraserMode);
+
 const canvas=this.canvasNode;
 const ctx=canvas.getContext('2d');
-
-let parentOffset=canvas.getBoundingClientRect();
+this.prevX = this.currX;
+this.prevY = this.currY;
+let parentOffset =canvas.getBoundingClientRect();
 this.currX = (e.clientX - parentOffset.left);
 this.currY = (e.clientY - parentOffset.top);
 
-if(this.shiftActive)
-{
-this.finalPos={x:this.currX,y:this.currY};
-this.draw(ctx);
-}else{
-if (this.flag) {
-this.prevX = this.currX;
-this.prevY = this.currY;
 
 if(this.eraserMode)
 {
@@ -402,7 +304,8 @@ this.draw(ctx);
 }
 else{
 if(this.currX!=0&&this.currY!=0){
-	    this.pencilPoints.push({x:this.currX,y:this.currY,drag:true});
+	    this.pencilPoints.push({x:this.currX,y:this.currY});
+this.orgicanvas.recievePoints(this.pencilPoints,this);
 this.draw(ctx);
 }
 
@@ -410,61 +313,22 @@ this.draw(ctx);
 
 }
 }
-}
 
 
 draw(ctx) {
 
-//Clear
- 	ctx.clearRect(this.baseX,this.baseY, this.props.cWidth, this.props.cHeight);
-	ctx.drawImage(this.image,this.baseX,this.baseY,Math.floor(this.imgWidth*this.scaleX*this.contextScale),Math.floor(this.imgHeight*this.scaleY*this.contextScale));
-
-ctx.lineWidth=this.pencilWidth;
-ctx.lineJoin="round";
-ctx.strokeStyle=this.pencilColor;
-
- let i = this.pencilPoints.length - 1
-    if (!this.pencilPoints[i].drag) {
-        if (this.pencilPoints.length == 0) {
-            ctx.beginPath();
-            ctx.moveTo(this.pencilPoints[i].x, this.pencilPoints[i].y);
-            ctx.stroke();
-        } else {
-            ctx.closePath();
-            ctx.beginPath();
-            ctx.moveTo(this.pencilPoints[i].x, this.pencilPoints[i].y);
-            ctx.stroke();
-        }
-    } else {
-        ctx.lineTo(this.pencilPoints[i].x, this.pencilPoints[i].y);
-        ctx.stroke();
-    }
-
-//Draw the entire thingy 
-
-for(let i=0;i<this.pencilPoints.length-2;i++)
-{
-            ctx.beginPath();
-            ctx.moveTo(this.pencilPoints[i].x, this.pencilPoints[i].y);
-             ctx.lineTo(this.pencilPoints[i+1].x,this.pencilPoints[i+1].y);
-            ctx.stroke();
-
-
-}
-
-
-//Draw  the from points and two points 
-if(this.shiftActive)
-{
-console.log("Joining Straight Lines ");
+ctx.clearRect(this.baseX,this.baseY, this.props.cWidth, this.props.cHeight);
+ctx.drawImage(this.image,this.baseX,this.baseY,Math.floor(this.imgWidth*this.scaleX*this.contextScale),Math.floor(this.imgHeight*this.scaleY*this.contextScale));
+for(var i=0;i<this.pencilPoints.length;i++){
   ctx.beginPath();
-        ctx.moveTo(this.startPos.x,this.startPos.y);
-        ctx.lineTo(this.finalPos.x,this.finalPos.y);
-        ctx.stroke();
+ ctx.fillStyle = this.pencilColor;
+ ctx.arc(this.pencilPoints[i].x,this.pencilPoints[i].y,this.pencilWidth, 0, 2 * Math.PI, false);
+ctx.fill();
+ }
 
-}
 
-}
+ }
+
 
 render() {
 
@@ -490,15 +354,12 @@ onTouchStart={this.handleTouchStart}
 onTouchMove={this.handleTouchMove}
 onTouchEnd={this.handleTouchEnd}
 childTrack={this.setchildCanvas}
+style={{marginLeft:10,marginRight:10}}
 />
+
 
 </div>
 </Hammer>
-	<div style={{marginTop:20}}>
-	
-	<ExtraTools context={this}/>
-
-	</div>
 </div>
 
 );

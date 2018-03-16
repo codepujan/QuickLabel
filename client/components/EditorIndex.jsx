@@ -71,9 +71,14 @@ dispatch(socketEmit({
     type:socketId,
     payload: {operationType,datapayload}
   }))
+
+//I dont know if this works or not 
+if(!(datapayload.label===undefined))
+dispatch({type:"ADD_ACTIVE_CLASS",payload:datapayload.label});
+
 }
 ,
-  changeColor:(color)=>dispatch({type:CHANGE_COLOR,payload:color}),
+  changeColor:(color,label)=>dispatch({type:CHANGE_COLOR,payload:{color:color,label:label}}),
   startLoading:()=>dispatch({type:CHANGE_LOADING}),
   changeImage:()=>dispatch({type:"CHANGE"}),
   goBack:()=>{
@@ -100,7 +105,7 @@ let currentSelection=props.myState;
 let operationState=props.operationState;
 let operationAction=props.operationAction;
 let loadSpinnerAction=props.spinnerAction;
-let applyColor=props.activeColor;
+let applyColor=props.currentColor;
 let socketId=props.socketId;
 let mThis=props.context;
 let historyState=props.history;
@@ -153,9 +158,9 @@ return(
 
 <div style={{flexDirection:'column'}}>
         <div style={{height:60}} onClick={(event)=>{
-console.log("Also Setting Active COlor ",rootContext.state.currentColor);
+console.log("Also Setting Active COlor ",rootContext.state.currentColor.color);
 
-rootContext.setState({activeColor:rootContext.state.currentColor},()=>{
+rootContext.setState({activeColor:rootContext.state.currentColor.color},()=>{
 rootContext.callChildServer()
 
 });
@@ -164,7 +169,7 @@ rootContext.callChildServer()
 
         Current Class :
         <br/>
-        <DrawCurrentSelection color={rootContext.state.currentColor}/>
+        <DrawCurrentSelection color={rootContext.state.currentColor.color}/>
         </div>
        <DrawColorSelection style={{marginLeft:20}} colorAction={rootContext.props.changeColor} currentDatabase={rootContext.props.imagesets.current} activeColor={rootContext.state.activeColor} instanceList={rootContext.props.operations.instanceColors}/>
 </div>
@@ -431,6 +436,13 @@ height={50}
 />
 </div>
 
+<div className="tool" onClick={(event)=>props.context.applyForeground()}>
+<Image src={require('../../images/foreground.jpg')}
+width={50}
+height={50}
+/>
+</div>
+
 
 </div>
 );
@@ -472,10 +484,12 @@ this.startTimer=this.startTimer.bind(this);
 this.stopTimer=this.stopTimer.bind(this);
 
 this.exportStats=this.exportStats.bind(this);
+this.applyForeground=this.applyForeground.bind(this);
 
 this.clickCount=0;
 this.startTime={}
 this.duration={}
+
 
 console.log(this.props.operations.image);
 
@@ -490,6 +504,10 @@ else
 {
 //Tryna do what mavericks do 
 }
+
+
+
+
 }
 
 
@@ -521,6 +539,26 @@ console.log("Duration for the Operation is ",this.duration);
 console.log("Clicks taken for the Operation is ",this.clickCount);
 
 }
+
+applyForeground(){
+
+console.log("Apply Foreground ");
+
+console.log("Active Foreground Array is ",this.props.history.activeclasses);
+let set=new Set(this.props.history.activeclasses);
+let array=Array.from(set);
+
+console.log("Foreground Array is ",array);
+
+this.props.operate("Foreground",{
+foregroundArray:array
+},this.props.communication.communicationId)
+
+
+
+
+}
+
 callChildServer(){
 
 if(this.childComp.callMyServer===undefined)
@@ -528,7 +566,7 @@ console.log("Cannot Call Child Server without any Child Component active ");
 else
 {
 this.childComp.callMyServer();
-this.addInstanceColor(this.state.currentColor);
+this.addInstanceColor(this.state.currentColor.color);
 
 }
 

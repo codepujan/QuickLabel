@@ -68,7 +68,8 @@ this.props.opAction('Circle',{
 startY:Math.floor(this.nStartY/this.scaleY),
 startX:Math.floor(this.nStartX/this.scaleX),
 radius:this.radius,
-rgb:hexToRgb(this.props.currentColor)
+rgb:hexToRgb(this.props.currentColor.color),
+label:this.props.currentColor.label
 },this.props.socketId);
 
 this.assistanceView.currentActive=false;

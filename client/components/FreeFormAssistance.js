@@ -117,10 +117,43 @@ this.setchildCanvas=this.setchildCanvas.bind(this);
 this.scaleX=props.cWidth/props.imgWidth;
 this.scaleY=props.cHeight/props.imgHeight;
 this.orgicanvas=props.orgicanvas;
+
+//Added for Straight Line 
+this.shiftActive=false;
+this.finalPos={x:0,y:0};
+this.startPos={x:0,y:0};
 this.state=({imgData:props.opState.original.data,width:props.imgWidth,height:props.imgHeight,zoomMode:false});
+
+//TODO : Determine if  this double requirement is needed or not 
+this.onKeyDown=this.onKeyDown.bind(this);
+this.onKeyUp=this.onKeyUp.bind(this);
 
 
 }
+
+componentWillMount(){
+document.addEventListener("keydown",this.onKeyDown);
+document.addEventListener("keyup",this.onKeyUp);
+}
+
+onKeyDown(e){
+if(e.keyCode==16)
+{
+this.shiftActive=true;
+console.log("Shift Active ");
+}
+}
+
+onKeyUp(e){
+if(e.keyCode==16)
+{
+this.shiftActive=false;
+console.log("Shift Not Active ");
+}
+
+}
+
+
 
 setchildCanvas(child){
 this.canvasNode=child;
@@ -246,28 +279,52 @@ ctx.drawImage(root.image,root.baseX,root.baseY,Math.floor(width*root.scaleX*root
 handleMouseDown(e){
 const canvas=this.canvasNode;
 this.currentActive=true;
-
+const ctx=this.canvasNode.getContext('2d');
 this.prevX = this.currX;
 this.prevY = this.currY;
 var parentOffset = canvas.getBoundingClientRect();
 this.currX = (e.clientX - parentOffset.left);
 this.currY = (e.clientY - parentOffset.top);
-this.flag=true;
+if(this.shiftActive){
+this.startPos={x:this.currX,y:this.currY};
+}else{
+
+if(this.currX!=0 && this.currY!=0){
+this.pencilPoints.push({x:this.currX,y:this.currY,drag:false});
+this.draw(ctx);
+
+
+}
 this.orgicanvas.markActive();
+this.flag=true;
 this.props.counterAction();
 
 }
 
+}
 
 handleMouseUp(e){
-this.flag=false;
-this.props.counterAction();
 
+if(this.shiftActive){
+this.pencilPoints.push({x:this.startPos.x,y:this.startPos.y,drag:true});
+this.pencilPoints.push({x:this.finalPos.x,y:this.finalPos.y,drag:true});
+this.shiftActive=false;
+}else{
+this.flag=false;
+}
+this.props.counterAction();
 }
 
 
 handleMouseOut(e){
+if(this.shiftActive){
+this.pencilPoints.push({x:this.startPos.x,y:this.startPos.y,drag:true});
+this.pencilPoints.push({x:this.finalPos.x,y:this.finalPos.y,drag:true});
+this.shiftActive=false;
+}else{
 this.flag=false;
+}
+this.props.counterAction();
 }
 
 
@@ -278,19 +335,23 @@ handleMouseMove(e){
 if(this.state.zoomMode==true)
 return; 
 
-if (this.flag) {
-
-console.log(this.eraserMode);
 
 const canvas=this.canvasNode;
 const ctx=canvas.getContext('2d');
-this.prevX = this.currX;
-this.prevY = this.currY;
+
 let parentOffset =canvas.getBoundingClientRect();
 this.currX = (e.clientX - parentOffset.left);
 this.currY = (e.clientY - parentOffset.top);
 
+if(this.shiftActive)
+{
+this.finalPos={x:this.currX,y:this.currY};
+this.draw(ctx);
+}else{
+if (this.flag) {
 
+this.prevX = this.currX;
+this.prevY = this.currY;
 if(this.eraserMode)
 {
 
@@ -315,20 +376,53 @@ this.draw(ctx);
 
 }
 }
-
+}
 
 draw(ctx) {
 
 ctx.clearRect(this.baseX,this.baseY, this.props.cWidth, this.props.cHeight);
 ctx.drawImage(this.image,this.baseX,this.baseY,Math.floor(this.imgWidth*this.scaleX*this.contextScale),Math.floor(this.imgHeight*this.scaleY*this.contextScale));
-for(var i=0;i<this.pencilPoints.length;i++){
-  ctx.beginPath();
-// ctx.lineWidth=this.pencilWidth;
-ctx.fillStyle = this.pencilColor;
-ctx.arc(this.pencilPoints[i].x,this.pencilPoints[i].y,this.pencilWidth, 0, 2 * Math.PI, false);
-ctx.fill();
+
+ctx.lineWidth=this.pencilWidth;
+ctx.lineJoin="round";
+ctx.strokeStyle=this.pencilColor;
+ let i = this.pencilPoints.length - 1
+    if (!this.pencilPoints[i].drag) {
+        if (this.pencilPoints.length == 0) {
+            ctx.beginPath();
+            ctx.moveTo(this.pencilPoints[i].x, this.pencilPoints[i].y);
+            ctx.stroke();
+        } else {
+            ctx.closePath();
+            ctx.beginPath();
+            ctx.moveTo(this.pencilPoints[i].x, this.pencilPoints[i].y);
+            ctx.stroke();
+        }
+    } else {
+        ctx.lineTo(this.pencilPoints[i].x, this.pencilPoints[i].y);
+        ctx.stroke();
+    }
+
+//Draw the entire thingy
+for(let i=0;i<this.pencilPoints.length-2;i++)
+{
+            ctx.beginPath();
+            ctx.moveTo(this.pencilPoints[i].x, this.pencilPoints[i].y);
+             ctx.lineTo(this.pencilPoints[i+1].x,this.pencilPoints[i+1].y);
+            ctx.stroke();
+
+
 }
 
+//Draw the from points and two points 
+if(this.shiftActive)
+{
+  ctx.beginPath();
+        ctx.moveTo(this.startPos.x,this.startPos.y);
+        ctx.lineTo(this.finalPos.x,this.finalPos.y);
+        ctx.stroke();
+
+}
 
 }
 

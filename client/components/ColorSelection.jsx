@@ -151,15 +151,15 @@ this.setState({classLabels:labelSet});
 })
 
 }
-changeCurrentColor(changeColor){
+changeCurrentColor(changeColor,label){
 
 //For Test Purposes , let's suppose now that this is itself the list for labeling an instance 
 console.log("Changing Color ",changeColor);
-
+console.log("Changing Label ",label);
 //let currentState=this.state.instanceSelected;
 //currentState[changeColor]=true;
 //this.setState({instanceSelected:currentState},()=>{
-this.props.colorAction(changeColor);
+this.props.colorAction(changeColor,label);
 
 //console.log("Instance selected ",this.state.instanceSelected);
 //});
@@ -202,7 +202,7 @@ return(
 <br/>
 <div id="rowArrangement">
 <div id="pickColor">
-<div style={{backgroundColor:item.hex,width:'150px',height:'50px'}} onClick={(event)=>this.changeCurrentColor(item.hex)}></div>
+<div style={{backgroundColor:item.hex,width:'150px',height:'50px'}} onClick={(event)=>this.changeCurrentColor(item.hex,item.label)}></div>
 </div>
 <div style={{marginLeft:10}} onClick={(event)=>this.setState({instanceViewActive:true,currentParentColor:item.hex,currentParent:item.label})}>
 <Image src={require('../../images/AddColor.png')}

@@ -71,17 +71,26 @@ callMyServer(){
 //startY,startX,startY+height,startX+width 
 
 console.log("Calling Server Broo");
-console.log("Current Color ",this.props.currentColor);
+console.log("Color Object ",this.props.currentColor);
+console.log("Current Color ",this.props.currentColor.color);
+
+console.log("Current Class ",this.props.currentColor.label);
+
+//Temp  : 
+
 
 this.currentActive=false;
 //this.props.currentColor;
 //
+
+
 this.props.opAction('Rectangle',{
 tly:Math.floor(this.startY/this.scaleY),
 tlx:Math.floor(this.startX/this.scaleX),
 bry:Math.floor((this.startY+this.rectHeight)/this.scaleY),
 brx:Math.floor((this.startX+this.rectWidth)/this.scaleX),
-rgb:hexToRgb(this.props.currentColor)
+rgb:hexToRgb(this.props.currentColor.color),
+label:this.props.currentColor.label
 },this.props.socketId);
 
 this.assistanceView.currentActive=false;

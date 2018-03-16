@@ -137,7 +137,8 @@ callMyServer(){
 //TODO : Not only magic points : only selected magic points 
 this.props.opAction('MagicTouch',{
 points:this.magicPoints,
-rgb:hexToRgb(this.props.currentColor)
+rgb:hexToRgb(this.props.currentColor.color),
+label:this.props.currentColor.label
 },this.props.socketId);
 }
 
