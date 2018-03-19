@@ -365,6 +365,22 @@ function DrawToolbar(props){
 return(
 <div className="horizontaltoolbox">
 
+
+<div className="tool" onClick={(event)=>props.context.historyBackward()}>
+<Image src={require('../../images/historyback.png')}
+width={50}
+height={50}
+/>
+</div>
+
+
+<div className="tool" onClick={(event)=>props.context.historyForward()}>
+<Image src={require('../../images/historyforward.png')}
+width={50}
+height={50}
+/>
+</div>
+
 <div className="tool" onClick={(event)=>{
 props.context.props.changeImage()
 props.context.handleStateChange('normal');
@@ -436,6 +452,8 @@ height={50}
 />
 </div>
 
+
+
 <div className="tool" onClick={(event)=>props.context.applyForeground()}>
 <Image src={require('../../images/foreground.jpg')}
 width={50}
@@ -485,7 +503,8 @@ this.stopTimer=this.stopTimer.bind(this);
 
 this.exportStats=this.exportStats.bind(this);
 this.applyForeground=this.applyForeground.bind(this);
-
+this.historyBackward=this.historyBackward.bind(this);
+this.historyForward=this.historyForward.bind(this);
 this.clickCount=0;
 this.startTime={}
 this.duration={}
@@ -553,10 +572,15 @@ console.log("Foreground Array is ",array);
 this.props.operate("Foreground",{
 foregroundArray:array
 },this.props.communication.communicationId)
+}
 
+historyBackward(){
 
+this.props.operate("historyback",{},this.props.communication.communicationId)
+}
 
-
+historyForward(){
+this.props.operate("historyforward",{},this.props.communication.communicationId)
 }
 
 callChildServer(){
