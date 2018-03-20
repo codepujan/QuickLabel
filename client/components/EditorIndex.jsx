@@ -52,6 +52,17 @@ const path_prefix = '/quicklabel';
 
 const addInstanceColorURL="https://eskns.com/addInstancecolor/";
 
+let labelsetAddURL="https://eskns.com/labelColor/";
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
 
 
 const mapStateToProps = state => ({
@@ -72,7 +83,9 @@ dispatch(socketEmit({
     payload: {operationType,datapayload}
   }))
 
-//I dont know if this works or not 
+//I dont know if this works or not
+console.log("Operating on class label ",datapayload.label);
+ 
 if(!(datapayload.label===undefined))
 dispatch({type:"ADD_ACTIVE_CLASS",payload:datapayload.label});
 
@@ -461,6 +474,14 @@ height={50}
 />
 </div>
 
+<div className="tool" onClick={(event)=>props.context.mergeclasses()}>
+<Image src={require('../../images/mergecolors.png')}
+width={50}
+height={50}
+/>
+</div>
+
+
 
 </div>
 );
@@ -505,6 +526,8 @@ this.exportStats=this.exportStats.bind(this);
 this.applyForeground=this.applyForeground.bind(this);
 this.historyBackward=this.historyBackward.bind(this);
 this.historyForward=this.historyForward.bind(this);
+this.mergeclasses=this.mergeclasses.bind(this);
+
 this.clickCount=0;
 this.startTime={}
 this.duration={}
@@ -573,6 +596,31 @@ this.props.operate("Foreground",{
 foregroundArray:array
 },this.props.communication.communicationId)
 }
+
+
+mergeclasses(){
+
+console.log("Applying Operation for merging classes ");
+
+axios.get(labelsetAddURL,{params:{database:this.props.imagesets.current}}).then((response) =>{
+let labels=[];
+let rgbs=[];
+for(var i=0;i<response.data.length;i++){
+labels.push(response.data[i].label);
+rgbs.push(hexToRgb(response.data[i].colorhex));
+}
+
+console.log("Merging Labels ",labels);
+console.log("Merging Colors",rgbs);
+
+this.props.operate("MergeInstance",{
+rgbs:rgbs,
+labels:labels
+},this.props.communication.communicationId)
+})
+
+}
+
 
 historyBackward(){
 

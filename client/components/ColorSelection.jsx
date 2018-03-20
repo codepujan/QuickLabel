@@ -182,13 +182,15 @@ return(<div></div>);
 
 }
 
-createInstanceList(item){
+createInstanceList(item,parentColor)
+{
+
 return(
 <div id="horizontal"style={{}}>
 {this.getTickedIcon(item.selected)}
 {" # "+item.count}
 <div id="pickColor" style={{marginLeft:2}}>
-<div style={{backgroundColor:item.hex,width:'150px',height:'50px'}} onClick={(event)=>this.changeCurrentColor(item.hex)}></div>
+<div style={{backgroundColor:item.hex,width:'150px',height:'50px'}} onClick={(event)=>this.changeCurrentColor(item.hex,parentColor)}></div>
 </div>
 </div>
 );
@@ -227,7 +229,7 @@ console.log("Comparing with ",this.state.instanceSelected);
 
 for(var i=0;i<instanceColors.length;i++){
 let hex="#"+instanceColors[i].hex;
-curatedList.push({count:i+1,hex:hex,selected:this.state.instanceSelected[hex]==true?true:false});
+curatedList.push({count:i+1,hex:hex,selected:this.state.instanceSelected[hex]==true?true:false,label:this.state.classLabels[i]});
 }
 console.log("Curated list ",curatedList);
 
@@ -240,11 +242,11 @@ let instances=[];
 let mClassLabels=this.state.classLabels;
 let listColors=mClassLabels.map(this.createColorsList);
 if(this.state.instanceViewActive){
-//For now ; only getting the gray color : because I am not sure how this thing actually works or even works :( 
+
 let instanceColors=new Values(this.state.currentParentColor).tints(10);
 instanceColors=instanceColors;
 instanceColors=this.curateInstanceList(instanceColors);
-instances=instanceColors.map(this.createInstanceList);
+instances=instanceColors.map((element)=>this.createInstanceList(element,this.state.currentParent));
 }
 else{
 instances=[];
