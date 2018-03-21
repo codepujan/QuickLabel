@@ -309,6 +309,9 @@ if(this.shiftActive){
 this.pencilPoints.push({x:this.startPos.x,y:this.startPos.y,drag:true});
 this.pencilPoints.push({x:this.finalPos.x,y:this.finalPos.y,drag:true});
 this.shiftActive=false;
+this.finalPos={x:0,y:0};
+this.startPos={x:0,y:0};
+
 }else{
 this.flag=false;
 }
@@ -317,13 +320,7 @@ this.props.counterAction();
 
 
 handleMouseOut(e){
-if(this.shiftActive){
-this.pencilPoints.push({x:this.startPos.x,y:this.startPos.y,drag:true});
-this.pencilPoints.push({x:this.finalPos.x,y:this.finalPos.y,drag:true});
-this.shiftActive=false;
-}else{
-this.flag=false;
-}
+his.flag=false;
 this.props.counterAction();
 }
 
