@@ -53,7 +53,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps=dispatch=>({
 
-downloadInitial:(userId,datasetId,clientId)=>dispatch({type:IMAGESET_REQUEST_BY_DATASET,payload:{userId:userId,dataSetId:datasetId,clientid:clientId}}),
+downloadInitial:(userId,datasetId,clientId,pagestate)=>dispatch({type:IMAGESET_REQUEST_BY_DATASET,payload:{userId:userId,dataSetId:datasetId,clientid:clientId,pageState:pagestate}}),
 setEditorImage:(imageId)=>dispatch({type:SET_EDITOR_IMAGE,payload:imageId}),
 navigateEditor:()=>dispatch(push(`${path_prefix}/editor`)),
 navigate:()=>dispatch({type:NAVIGATE_EDITOR}),
@@ -128,7 +128,7 @@ console.log("Requesting Image to ",imageRequestURL);
 
 console.log("Dataset Name ",this.props.imagesets.current);
 
-this.props.downloadInitial(this.props.userinfo.userid,this.props.imagesets.current,this.props.userinfo.clientid.clientId);
+this.props.downloadInitial(this.props.userinfo.userid,this.props.imagesets.current,this.props.userinfo.clientid.clientId,this.props.imagesets.pageState);
 
 this.requestLastWorkingImage();
 
@@ -159,13 +159,15 @@ throw(error);
 
 
 createCompletedImages(item){
-console.log(item);
+console.log("Completed ",item);
 if(item.imageId==this.lastActive){
 this.lastbase64=item.data;
 }
 
 if(item.completed==0)
 return;
+
+
 
 return(
 <div id="thumbnailDataSetImage">
@@ -193,12 +195,13 @@ height={40}
 }
 
 createIncompleteImages(item){
-console.log(item);
+console.log("Incompleted ",item);
 if(item.imageId==this.lastActive){
 this.lastbase64=item.data;
 }
 if(item.completed==1)
 return;
+
 
 return(
 <div id="thumbnailDataSetImage">
@@ -232,17 +235,50 @@ height={40}
 console.log("Loading",this.props.imagesets.loading);
 
 if(!this.props.imagesets.loading){
-let imageEntries=this.props.imagesets.data;
+
+
+console.log("Imagesets ",this.props.imagesets.data[0]);
+
+
+
+if(this.props.imagesets.data.length==0)
+return(<div></div>);
+
+
+let imageEntries=[];
+
+for(let x=0;x<this.props.imagesets.data.length;x++)
+for(let y=0;y<this.props.imagesets.data[x].length;y++)
+imageEntries.push(this.props.imagesets.data[x][y]);
+
+//let imageEntries=this.props.imagesets.data[0];
+
+console.log("Image Entries ",imageEntries);
 
 let completedItems=imageEntries.map(this.createCompletedImages,this);
 
 let incompleteItems=imageEntries.map(this.createIncompleteImages,this);
+
+if(this.props.imagesets.pageState!="start")
+{
+console.log("Extending Images ",this.props.imagesets.pageState);
+this.requestImages();
+}else{
+
+console.log("Either first fetch already done or End Reached ");
+console.log("State ",this.props.imagesets.pageState);
+
+
+}
+
 
 return (
 
 <div>
 
 <div>
+
+
 <div style={{fontSize:18,color:'blue',fontWeight:'bold'}}>
 Previously Working Image : </div>
 <br/>
@@ -258,7 +294,10 @@ height={200}
 </div>
 
 </div>
+
 </div>
+
+
 
 <div style={{fontSize:18,color:'blue',fontWeight:'bold'}}>
 Completed  Images : </div>

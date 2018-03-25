@@ -12,15 +12,17 @@ const IMAGESET_LOADING="IMAGESET_LOADING";
 
 import axios from 'axios';
 
-const getImageSetsApi=(dataSetId,userId,clientId)=>{
+const getImageSetsApi=(dataSetId,userId,clientId,pageState)=>{
 
 console.log("SAGAS REQUESTING ",imageRequestURL);
+console.log("Page State is ",pageState);
 
 return axios.post(imageRequestURL,
 {
 dataset:dataSetId,
 userid:userId,
-clientId:clientId
+clientId:clientId,
+pagestate:pageState
 }).then((response)=>response.data).catch((error)=>{
 console.log("Error Alert ",error);
 throw(error);
@@ -28,15 +30,18 @@ throw(error);
 }
 
 export function* requestImageSets(data){
-console.log(data.payload.dataSetId);
-console.log(data.payload.userId);
 try{
 
+if(data.payload.pageState=="start") // if it's the first time  only then loading 
 yield put({type:IMAGESET_LOADING});
-let sets=yield call(getImageSetsApi,data.payload.dataSetId,data.payload.userId,data.payload.clientid);
+
+
+let sets=yield call(getImageSetsApi,data.payload.dataSetId,data.payload.userId,data.payload.clientid,data.payload.pageState);
+
 
 
 yield put({type:IMAGESET_OBTAINED,payload:sets});
+
 
 
 }catch(err){

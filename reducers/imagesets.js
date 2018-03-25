@@ -3,7 +3,8 @@ const IMAGESET_OBTAINED_FAILURE="IMAGESET_OBTAINED_FAILURE";
 const IMAGESET_LOADING="IMAGESET_LOADING";
 const CHANGE_CURRENT_IMAGESET="CHANGE_CURRENT_IMAGESET"
 
-let initialImageSet={loading:false,data:[],current:""};
+
+let initialImageSet={loading:false,data:[],current:"",pageState:"start"};
 
 export const imagesets=(state=initialImageSet,action)=>{
 switch (action.type) {
@@ -11,12 +12,25 @@ switch (action.type) {
   if(action.payload===undefined)
         return state;
 
-console.log("Got From Server",action.payload);
-return Object.assign({},state,{loading:false,data:action.payload});
+//action.payload.data , has the data part 
+//pageState has the part needed for pagination 
+
+let nextpage=action.payload.state===null?"start":action.payload.state;
 
 
+console.log("Reducer NExt Page State is ",nextpage);
 
-}case IMAGESET_OBTAINED_FAILURE:{
+
+return {
+...state,
+data:[...state.data,action.payload.data],
+pageState:nextpage,
+loading:false
+};
+
+}
+
+case IMAGESET_OBTAINED_FAILURE:{
 
 console.log("Oh No !! Some sort of Network Failure my Boy ");
 return state;
@@ -28,8 +42,11 @@ return Object.assign({},state,{loading:true});
 
 }
 
+
 case CHANGE_CURRENT_IMAGESET:{
-return Object.assign({},state,{current:action.payload})
+console.log("Changing Current Active Dtaabase ",action.payload);
+
+return Object.assign({},state,{current:action.payload,data:[]})
 }
 default:
     return state
