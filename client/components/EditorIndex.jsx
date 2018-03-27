@@ -44,6 +44,7 @@ const CHANGE_LOADING="LOADING";
 
 const INCREASE_HISTORY_INDEX='INCREASE_HISTORY_INDEX';
 const DECREASE_HISTORY_INDEX='DECREASE_HISTORY_INDEX';
+const CLEAR_IMAGE_LIST="CLEAR_IMAGE_LIST";
 
 let CHANGE_COLOR="COLOR_CHANGE";
 
@@ -103,6 +104,9 @@ dispatch({type:"ADD_ACTIVE_CLASS",payload:datapayload.label});
 },
     redoSelection:()=>{
 	dispatch({type:INCREASE_HISTORY_INDEX});
+	},
+	clearImages:()=>{
+	dispatch({type:CLEAR_IMAGE_LIST});	
 	}
 })
 
@@ -191,11 +195,13 @@ rootContext.callChildServer()
 (event)=>
 {
 rootContext.props.operate("Completed",{
-base64:rootContext.props.operations.image.data,
+base64:rootContext.props.operations.active.data,
 userid:rootContext.props.userinfo.userid,
 datasetid:rootContext.props.imagesets.current,
 imageid:rootContext.props.operations.currentImageId
 },rootContext.props.communication.communicationId)
+
+rootContext.props. clearImages();
 rootContext.props.goBack();
 
 }
@@ -214,6 +220,8 @@ userid:rootContext.props.userinfo.userid,
 datasetid:rootContext.props.imagesets.current,
 imageid:rootContext.props.operations.currentImageId
 },rootContext.props.communication.communicationId)
+
+rootContext.props. clearImages();
 rootContext.props.goBack();
 }
 }

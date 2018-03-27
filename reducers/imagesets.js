@@ -2,6 +2,7 @@ const IMAGESET_OBTAINED="IMAGESET_OBTAINED";
 const IMAGESET_OBTAINED_FAILURE="IMAGESET_OBTAINED_FAILURE";
 const IMAGESET_LOADING="IMAGESET_LOADING";
 const CHANGE_CURRENT_IMAGESET="CHANGE_CURRENT_IMAGESET"
+const CLEAR_IMAGE_LIST="CLEAR_IMAGE_LIST";
 
 
 let initialImageSet={loading:false,data:[],current:"",pageState:"start"};
@@ -41,7 +42,13 @@ case IMAGESET_LOADING:{
 return Object.assign({},state,{loading:true});
 
 }
+ 
 
+case CLEAR_IMAGE_LIST:{
+console.log("Clearing Array of Images ");
+return Object.assign({},state,{data:[]})
+
+}
 
 case CHANGE_CURRENT_IMAGESET:{
 console.log("Changing Current Active Dtaabase ",action.payload);

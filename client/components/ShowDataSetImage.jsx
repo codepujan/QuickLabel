@@ -302,7 +302,7 @@ height={200}
 <div style={{fontSize:18,color:'blue',fontWeight:'bold'}}>
 Completed  Images : </div>
 <br/>
- <StackGrid id="hzgrid" columnWidth={400}
+ <StackGrid id="hzgrid" columnWidth={450}
       >	{completedItems};
 </StackGrid>
 
@@ -312,7 +312,7 @@ Completed  Images : </div>
 <div style={{fontSize:18,color:'blue',fontWeight:'bold'}}>
 InComplete Images : </div>
 <br/>
-<StackGrid id="hzgrid" columnWidth={400}
+<StackGrid id="hzgrid" columnWidth={450}
       > {incompleteItems};
 </StackGrid>
 
