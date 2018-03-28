@@ -320,7 +320,7 @@ this.props.counterAction();
 
 
 handleMouseOut(e){
-his.flag=false;
+this.flag=false;
 this.props.counterAction();
 }
 

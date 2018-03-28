@@ -59,7 +59,8 @@ navigateEditor:()=>dispatch(push(`${path_prefix}/editor`)),
 navigate:()=>dispatch({type:NAVIGATE_EDITOR}),
 navigateCreateNew:()=>dispatch(push(`${path_prefix}/imageUploader`)),
 navigateNew:()=>dispatch({type:NAVIGATE_IMAGE_UPLOADER}),
-freshenUpState:()=>dispatch({type:'CLEAR'})
+freshenUpState:()=>dispatch({type:'CLEAR'}),
+freshenList:()=>dispatch({type:'CLEAR_IMAGE_LIST'})
 
 });
 
@@ -78,6 +79,7 @@ requestSize:5,
 imageBuffers:[],
 }
 this.props.freshenUpState();
+this.props.freshenList();
 this.requestImages();
 this.navigateImage=this.navigateImage.bind(this);
 this.downloadSingleImage=this.downloadSingleImage.bind(this);
